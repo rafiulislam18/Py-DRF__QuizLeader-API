@@ -37,6 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # Third-party packages
+    'rest_framework',
+
+    # Custom apps
+    'apps.authentication',
+    'apps.quiz',
 ]
 
 MIDDLEWARE = [
