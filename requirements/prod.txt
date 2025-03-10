@@ -1,0 +1,2 @@
+-r base.txt  # Include all base dependencies
+gunicorn==23.0.0  # WSGI server for production

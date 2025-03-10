@@ -1,0 +1,3 @@
+-r base.txt  # Include all base dependencies
+python-dotenv==1.0.1  # Environment variable management
+django-debug-toolbar==5.0.1  # Debugging tool for development

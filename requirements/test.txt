@@ -1,0 +1,4 @@
+-r base.txt  # Include all base dependencies
+pytest==8.3.5
+pytest-django==4.10.0
+factory_boy==3.3.3  # For generating test data
