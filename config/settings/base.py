@@ -4,7 +4,6 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -15,6 +14,8 @@ INSTALLED_APPS = [
 
     # Third-party packages
     'rest_framework',
+    'rest_framework_simplejwt.token_blacklist',  # Special to blacklist refresh tokens after rotation or logged out
+    'drf_yasg',  # Swagger
 
     # Custom apps
     'apps.authentication',
