@@ -8,7 +8,7 @@ load_dotenv()
 DEBUG = True
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = []  # Keeping this empty will take this by default: ['localhost', '127.0.0.1']
 
 DATABASES = {
     'default': {
@@ -20,3 +20,5 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
+
+SIMPLE_JWT['SIGNING_KEY'] = SECRET_KEY
