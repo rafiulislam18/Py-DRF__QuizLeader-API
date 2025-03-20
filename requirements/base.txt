@@ -1,3 +1,5 @@
 Django==5.1.7
 djangorestframework==3.15.2
+djangorestframework-simplejwt==5.5.0  # JWT authentication
 psycopg2-binary==2.9.10  # PostgreSQL driver for production and development
+drf-yasg==1.21.10  # Swagger documentation
