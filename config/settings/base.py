@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from datetime import timedelta
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -37,13 +38,23 @@ AUTH_USER_MODEL = 'authentication.CustomUser'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',  # Use Simple JWT
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+    'ROTATE_REFRESH_TOKENS': True,  # Issues a new refresh token on each refresh
+    'BLACKLIST_AFTER_ROTATION': True,  # Blacklists old refresh tokens
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': None,  # Use Django's SECRET_KEY for signing & config this later on separate environment-specific settings files due to security reasons
+    'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
 
 TEMPLATES = [
     {
