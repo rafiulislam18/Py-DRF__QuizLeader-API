@@ -155,8 +155,8 @@ class QuizSubmitResponseSerializer(serializers.ModelSerializer):
 class LeaderboardResponseSerializer(serializers.Serializer):
     username = serializers.CharField(help_text="Username of the player")
     high_score = serializers.IntegerField(help_text="Highest score achieved")
-    avg_score = serializers.FloatField(help_text="Average score across all attempts")
-    total_attempts = serializers.IntegerField(help_text="Total number of quiz attempts/plays")
+    avg_score = serializers.FloatField(help_text="Average score across all quiz play attempts")
+    total_played = serializers.IntegerField(help_text="Total number of quiz play attempts")
 
 
 class LeaderboardPaginatedResponseSerializer(serializers.Serializer):

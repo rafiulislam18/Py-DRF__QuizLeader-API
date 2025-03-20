@@ -241,7 +241,7 @@ class SubjectLeaderboardView(APIView):
             ).values(username=F('user__username')).annotate(
                 high_score=Max('score'),
                 avg_score=Avg('score'),
-                total_attempts=Count('id')
+                total_played=Count('id')
             ).order_by('-high_score')[:10]
 
             if not attempts.exists():
@@ -320,7 +320,7 @@ class GlobalLeaderboardView(APIView):
             ).values(username=F('user__username')).annotate(
                 high_score=Max('score'),
                 avg_score=Avg('score'),
-                total_attempts=Count('id')
+                total_played=Count('id')
             ).order_by('-high_score')[:25]
 
             # Enforce pagination
