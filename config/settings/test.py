@@ -1,9 +1,14 @@
 from .base import *
+from dotenv import load_dotenv
+
+
+# Load environment variables from .env file
+load_dotenv()
 
 DEBUG = True
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["testserver", "localhost", "127.0.0.1"]
 
 DATABASES = {
     'default': {
@@ -11,6 +16,8 @@ DATABASES = {
         'NAME': ':memory:',  # In-memory database for faster tests
     }
 }
+
+SIMPLE_JWT['SIGNING_KEY'] = SECRET_KEY
 
 # Disable security features that might slow down tests
 SECURE_SSL_REDIRECT = False
