@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Max, Avg, Count, F
 from .models import Subject, Lesson, Question, QuizAttempt
-from .serializers import SubjectSerializer, LessonSerializer, LessonResponseSerializer, QuestionSerializer, QuestionResponseSerializer, QuestionPaginatedResponseSerializer, SubjectPaginatedResponseSerializer, LessonPaginatedResponseSerializer
+from .serializers import SubjectSerializer, LessonSerializer, LessonResponseSerializer, QuestionSerializer, QuestionResponseSerializer, QuizStartResponseSerializer, QuestionPaginatedResponseSerializer, SubjectPaginatedResponseSerializer, LessonPaginatedResponseSerializer
 from django.db import transaction
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -18,6 +18,78 @@ import logging
 
 # Create a logger instance
 logger = logging.getLogger(__name__)
+
+
+class QuizStartView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    # Start a new quiz with randomized questions for a lesson
+    @swagger_auto_schema(
+        tags=["Quiz-Game"],
+        operation_description="Start a new quiz with up to 15 randomized questions for a lesson",
+        manual_parameters=[
+            openapi.Parameter(
+                'lesson_id',
+                openapi.IN_PATH,
+                description="ID of the lesson to start quiz for",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            )
+        ],
+        responses={
+            200: openapi.Response('Success: Quiz start successful', QuizStartResponseSerializer),
+            400: 'Error: Bad request',
+            401: 'Error: Unauthorized',
+            404: 'Error: Not found',
+            500: 'Error: Internal server error'
+        }
+    )
+    def post(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+
+            # Get a list of question IDs for the lesson
+            question_ids = list(lesson.questions.values_list('id', flat=True))
+            
+            # Select random IDs (up to 15)
+            selected_ids = random.sample(
+                question_ids, 
+                min(len(question_ids), 15)
+            )
+            
+            # Fetch only the selected questions
+            questions = lesson.questions.filter(id__in=selected_ids)
+            
+            # Create a new quiz attempt
+            attempt = QuizAttempt.objects.create(
+                user=request.user,
+                lesson=lesson,
+                score=0
+            )
+            
+            return Response({
+                'attempt_id': attempt.id,
+                'questions': QuestionResponseSerializer(questions, many=True).data
+            })
+        
+        except Lesson.DoesNotExist:
+            return Response(
+                {"detail": "Lesson not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            logger.error(f"Error in QuizStartView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class SubjectView(APIView):
