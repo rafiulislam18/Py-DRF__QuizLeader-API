@@ -23,3 +23,10 @@ SIMPLE_JWT['SIGNING_KEY'] = SECRET_KEY
 SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_SECURE = False
+
+LOGGING['handlers']['console']['level'] = 'WARNING'
+LOGGING['handlers'].pop('file', None)
+
+for logger in LOGGING['loggers'].values():
+    logger['handlers'] = ['console']
+    logger['level'] = 'WARNING'
