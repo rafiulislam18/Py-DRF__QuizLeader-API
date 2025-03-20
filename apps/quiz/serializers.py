@@ -105,3 +105,14 @@ class QuestionPaginatedResponseSerializer(serializers.Serializer):
         help_text="List of questions",
         many=True
     )
+    
+
+class QuizStartResponseSerializer(serializers.Serializer):
+    attempt_id = serializers.IntegerField(
+        help_text="ID of the created quiz attempt"
+    )
+    questions = QuestionResponseSerializer(
+        many=True,
+        help_text="List of randomized questions for the quiz",
+        read_only=True
+    )
