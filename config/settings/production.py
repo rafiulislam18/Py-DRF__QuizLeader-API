@@ -1,5 +1,6 @@
 from .base import *
 
+
 DEBUG = False
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
@@ -15,6 +16,8 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
+
+SIMPLE_JWT['SIGNING_KEY'] = SECRET_KEY
 
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
