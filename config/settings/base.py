@@ -55,6 +55,12 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',  # In-memory cache
+        'LOCATION': 'quizLeaderAPI-cache',  # A unique identifier for the cache (can be anything for django default cache)
+    }
+}
 
 TEMPLATES = [
     {
