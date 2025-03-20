@@ -59,3 +59,11 @@ class LoginResponseSerializer(serializers.Serializer):
     refresh = serializers.CharField()
     access = serializers.CharField()
     user = CustomUserSerializer()
+
+
+class LogoutSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+
+
+class LogoutResponseSerializer(serializers.Serializer):
+    detail = serializers.CharField()
