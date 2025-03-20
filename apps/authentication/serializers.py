@@ -38,16 +38,24 @@ class RegisterResponseSerializer(serializers.Serializer):
 
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
-    password = serializers.CharField()
-    device_id = serializers.CharField()
-    
+    password = serializers.CharField(write_only=True)
+
     def validate(self, data):
-        if len(data['password']) < 8:
-            raise ValidationError("Password must be at least 8 characters")
+        username = data.get('username')
+        password = data.get('password')
+
+        if username and password:
+            user = authenticate(request=self.context.get('request'), username=username, password=password)
+            if not user:
+                raise ValidationError("Invalid username or password")
+        else:
+            raise ValidationError("Both username and password are required")
+
+        data['user'] = user
         return data
 
 
-class DeviceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Device
-        fields = ['device_id', 'last_login']
+class LoginResponseSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+    user = CustomUserSerializer()
