@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/swagger/', permanent=False), name='landing'),
 
-    # Swagger URLs
+    # Config URLs for Swagger
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),  # example path: domain/swagger.json/
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc-ui'),
