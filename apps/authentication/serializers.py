@@ -1,7 +1,9 @@
-from rest_framework import serializers
-from .models import CustomUser
-from rest_framework.exceptions import ValidationError
 from django.contrib.auth import authenticate
+
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
+from .models import CustomUser
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
@@ -45,7 +47,11 @@ class LoginSerializer(serializers.Serializer):
         password = data.get('password')
 
         if username and password:
-            user = authenticate(request=self.context.get('request'), username=username, password=password)
+            user = authenticate(
+                request=self.context.get('request'),
+                username=username,
+                password=password
+            )
             if not user:
                 raise ValidationError("Invalid username or password")
         else:

@@ -1,5 +1,11 @@
 from django.urls import path
-from .views import RegisterView, LoginView, LogoutView, MyTokenRefreshView
+
+from .views import (
+    RegisterView,
+    LoginView,
+    LogoutView,
+    MyTokenRefreshView
+)
 
 
 urlpatterns = [

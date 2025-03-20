@@ -1,15 +1,28 @@
+import logging
+
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
-from .serializers import CustomUserSerializer, RegisterSerializer, RegisterResponseSerializer, LoginSerializer, LoginResponseSerializer, LogoutSerializer, LogoutResponseSerializer, TokenRefreshResponseSerializer
+
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
-from rest_framework import status
+
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
-import logging
+
+from .serializers import (
+    CustomUserSerializer,
+    RegisterSerializer,
+    RegisterResponseSerializer,
+    LoginSerializer,
+    LoginResponseSerializer,
+    LogoutSerializer,
+    LogoutResponseSerializer,
+    TokenRefreshResponseSerializer
+)
 
 
 # Create a logger instance
@@ -25,7 +38,10 @@ class RegisterView(APIView):
         operation_description="Register a new user & get JWT tokens",
         request_body=RegisterSerializer,
         responses={
-            201: openapi.Response('Success: Registration successful', RegisterResponseSerializer),
+            201: openapi.Response(
+                'Success: Registration successful',
+                RegisterResponseSerializer
+            ),
             400: 'Error: Bad request',
             500: 'Error: Internal server error'
         }
@@ -47,7 +63,10 @@ class RegisterView(APIView):
                 'username': user.username,
             }
 
-            return Response(RegisterResponseSerializer(response).data, status=status.HTTP_201_CREATED)
+            return Response(
+                RegisterResponseSerializer(response).data,
+                status=status.HTTP_201_CREATED
+            )
         
         except ValidationError as e:
             return Response(
@@ -56,7 +75,12 @@ class RegisterView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in RegisterView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in RegisterView.post(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -72,14 +96,20 @@ class LoginView(APIView):
         operation_description="Login user & get JWT tokens",
         request_body=LoginSerializer,
         responses={
-            200: openapi.Response('Success: Login successful', LoginResponseSerializer),
+            200: openapi.Response(
+                'Success: Login successful',
+                LoginResponseSerializer
+            ),
             400: 'Error: Bad request',
             500: 'Error: Internal server error'
         }
     )
     def post(self, request):
         try:
-            serializer = LoginSerializer(data=request.data, context={'request': request})
+            serializer = LoginSerializer(
+                data=request.data,
+                context={'request': request}
+            )
             serializer.is_valid(raise_exception=True)
             user = serializer.validated_data['user']
 
@@ -93,7 +123,10 @@ class LoginView(APIView):
                 'user': CustomUserSerializer(user).data
             }
 
-            return Response(LoginResponseSerializer(response).data)
+            return Response(
+                LoginResponseSerializer(response).data,
+                status=status.HTTP_200_OK
+            )
         
         except ValidationError as e:
             return Response(
@@ -102,7 +135,12 @@ class LoginView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in LoginView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in LoginView.post(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -118,7 +156,10 @@ class LogoutView(APIView):
         operation_description="Logout user by refresh token",
         request_body=LogoutSerializer,
         responses={
-            200: openapi.Response('Success: Logout successful', LogoutResponseSerializer),
+            200: openapi.Response(
+                'Success: Logout successful',
+                LogoutResponseSerializer
+            ),
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             500: 'Error: Internal server error'
@@ -153,7 +194,12 @@ class LogoutView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in LogoutView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in LogoutView.post(): {str(e)}",
+                exc_info=True
+            )
+            
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -166,9 +212,16 @@ class MyTokenRefreshView(TokenRefreshView):
     # Handle token refresh
     @swagger_auto_schema(
         tags=["Authentication"],
-        operation_description="Takes a refresh type JSON web token and returns an access type JSON web token & a new refresh token blacklisting the previous one if the submitted refresh token is valid.",
+        operation_description=(
+            "Takes a refresh type JSON web token and returns an access type "
+            "JSON web token & a new refresh token blacklisting the previous "
+            "one if the submitted refresh token is valid."
+        ),
         responses={
-            200: openapi.Response('Success: Token refresh successful', TokenRefreshResponseSerializer),
+            200: openapi.Response(
+                'Success: Token refresh successful',
+                TokenRefreshResponseSerializer
+            ),
             401: 'Error: Unauthorized',
             500: 'Error: Internal server error'
         }
@@ -190,7 +243,12 @@ class MyTokenRefreshView(TokenRefreshView):
             )
 
         except Exception as e:
-            logger.error(f"Error in MyTokenRefreshView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in MyTokenRefreshView.post(): {str(e)}",
+                exc_info=True
+            )
+            
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
