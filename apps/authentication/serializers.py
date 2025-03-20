@@ -67,3 +67,8 @@ class LogoutSerializer(serializers.Serializer):
 
 class LogoutResponseSerializer(serializers.Serializer):
     detail = serializers.CharField()
+
+
+class TokenRefreshResponseSerializer(serializers.Serializer):
+    refresh = serializers.CharField()
+    access = serializers.CharField(read_only=True)
