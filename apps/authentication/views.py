@@ -1,9 +1,5 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from .serializers import LoginSerializer, UserSerializer, DeviceSerializer
-from .models import Device
 from rest_framework.permissions import AllowAny
 from rest_framework.exceptions import ValidationError
 from .serializers import CustomUserSerializer, RegisterSerializer, RegisterResponseSerializer, LoginSerializer, LoginResponseSerializer, LogoutSerializer, LogoutResponseSerializer, TokenRefreshResponseSerializer
@@ -69,34 +65,45 @@ class RegisterView(APIView):
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    
+
+    # Handle user login and return JWT tokens
+    @swagger_auto_schema(
+        tags=["Authentication"],
+        operation_description="Login user & get JWT tokens",
+        request_body=LoginSerializer,
+        responses={
+            200: openapi.Response('Success: Login successful', LoginResponseSerializer),
+            400: 'Error: Bad request',
+            500: 'Error: Internal server error'
+        }
+    )
     def post(self, request):
-        # Handle user login with device ID optimization
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer = LoginSerializer(data=request.data, context={'request': request})
+            serializer.is_valid(raise_exception=True)
+            user = serializer.validated_data['user']
+
+            # Generate JWT tokens
+            refresh = RefreshToken.for_user(user)
+            access_token = str(refresh.access_token)
+
+            response = {
+                'refresh': str(refresh),
+                'access': access_token,
+                'user': CustomUserSerializer(user).data
+            }
+
+            return Response(LoginResponseSerializer(response).data)
         
-        device_id = serializer.validated_data['device_id']
-        device = Device.objects.filter(device_id=device_id).first()
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         
-        if device:
-            user = device.user
-            token, _ = Token.objects.get_or_create(user=user)
-            return Response({
-                'token': token.key,
-                'user': UserSerializer(user).data
-            })
-            
-        user = authenticate(
-            username=serializer.validated_data['username'],
-            password=serializer.validated_data['password']
-        )
-        if not user:
-            return Response({'error': 'Invalid credentials'}, status=401)
-            
-        Device.objects.create(user=user, device_id=device_id)
-        token, _ = Token.objects.get_or_create(user=user)
-        
-        return Response({
-            'token': token.key,
-            'user': UserSerializer(user).data
-        })
+        except Exception as e:
+            logger.error(f"Error in LoginView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
