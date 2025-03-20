@@ -69,3 +69,57 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGS_DIR = os.path.join(BASE_DIR, 'logs')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{levelname}] [{asctime}] [{module}] [{pathname}] [{lineno}] >> {message}',
+            'style': '{',
+        },
+        'simple': {
+            'format': '[{levelname}] >> {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'level': None,  # Config later
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'file': {
+            'level': None,  # Config later
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': None,  # Config later
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,  # Keep 5 backup/old-log files
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        '': {  # Root logger
+            'handlers': ['console', 'file'],
+            'level': None,  # Config later
+            'propagate': True,
+        },
+        'django': {
+            'handlers': ['console', 'file'],
+            'level': None,  # Config later
+            'propagate': False,
+        },
+        'apps.authentication': {
+            'handlers': ['console', 'file'],
+            'level': None,  # Config later
+            'propagate': False,
+        },
+        'apps.quiz': {
+            'handlers': ['console', 'file'],
+            'level': None,  # Config later
+            'propagate': False,
+        },
+    }
+}
