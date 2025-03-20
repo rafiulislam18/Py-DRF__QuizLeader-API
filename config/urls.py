@@ -24,6 +24,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', RedirectView.as_view(url='/swagger/', permanent=False), name='landing'),
 
+    # Config URLs for custom apps
+    path('auth/', include('apps.authentication.urls')),
+    path('quiz/', include('apps.quiz.urls')),
+
     # Config URLs for Swagger
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),  # example path: domain/swagger.json/
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
