@@ -8,6 +8,6 @@ class CustomUserAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'username', 'highest_score', 'total_played', 'is_staff'
     )
-    search_fields = ('username', 'highest_score')
+    search_fields = ('username',)
     ordering = ('-highest_score',)
     list_per_page = 15
