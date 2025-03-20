@@ -11,7 +11,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 import random
-from .paginators import SubjectListPagination, LessonListPagination, QuestionListPagination, SubjectLeaderboardPagination
+from .paginators import SubjectListPagination, LessonListPagination, QuestionListPagination, SubjectLeaderboardPagination, GlobalLeaderboardPagination
 from django.core.cache import cache
 import logging
 
@@ -277,6 +277,73 @@ class SubjectLeaderboardView(APIView):
         
         except Exception as e:
             logger.error(f"Error in SubjectLeaderboardView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class GlobalLeaderboardView(APIView):
+    permission_classes = [AllowAny]
+    pagination_class = GlobalLeaderboardPagination
+
+    # Get global leaderboard (top 25) accross all lessons
+    @swagger_auto_schema(
+        tags=["Quiz-Leaderboard"],
+        operation_description="Get global leaderboard (top 25 players) across all lessons",
+        manual_parameters=[
+            openapi.Parameter(
+                'page',
+                openapi.IN_QUERY,
+                description="Page number (default: 1)",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            ),
+            openapi.Parameter(
+                'page_size',
+                openapi.IN_QUERY,
+                description=f"Number of results per page (default: {GlobalLeaderboardPagination.page_size}, max: {GlobalLeaderboardPagination.max_page_size})",
+                type=openapi.TYPE_INTEGER,
+                required=False
+            )
+        ],
+        responses={
+            200: openapi.Response('Success: Get global leaderboard successful', LeaderboardPaginatedResponseSerializer),
+            400: 'Error: Bad request',
+            500: 'Error: Internal server error'
+        }
+    )
+    def get(self, request):
+        try:
+            attempts = QuizAttempt.objects.filter(
+                completed=True
+            ).values(username=F('user__username')).annotate(
+                high_score=Max('score'),
+                avg_score=Avg('score'),
+                total_attempts=Count('id')
+            ).order_by('-high_score')[:25]
+
+            # Enforce pagination
+            paginator = self.pagination_class()
+            page = paginator.paginate_queryset(attempts, request)
+            if page is not None:
+                serializer = LeaderboardResponseSerializer(page, many=True)
+                return paginator.get_paginated_response(serializer.data)
+
+            # If paginaation is not applied, throw an error
+            return Response(
+                {"error": "Pagination is required for this endpoint."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except NotFound as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except Exception as e:
+            logger.error(f"Error in GlobalLeaderboardView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
