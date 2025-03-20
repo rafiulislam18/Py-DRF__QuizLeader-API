@@ -24,3 +24,12 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+
+os.makedirs(LOGS_DIR, exist_ok=True)
+
+LOGGING['handlers']['console']['level'] = 'INFO'
+LOGGING['handlers']['file']['level'] = 'INFO'
+LOGGING['handlers']['file']['filename'] = os.path.join(LOGS_DIR, 'prod.log')
+
+for logger in LOGGING['loggers'].values():
+    logger['level'] = 'ERROR'
