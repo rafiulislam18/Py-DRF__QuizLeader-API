@@ -12,20 +12,20 @@ class SubjectAdmin(admin.ModelAdmin):
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'subject')
-    search_fields = ('subject__name', 'title')
-    ordering = ('subject__name',)
+    search_fields = ('title',)
+    ordering = ('subject',)
     list_per_page = 15
 
 @admin.register(Question)
 class QuestionAdmin(admin.ModelAdmin):
     list_display = ('id', 'text', 'correct_answer', 'lesson')
-    search_fields = ('lesson__subject__name', 'lesson__title', 'text')
-    ordering = ('lesson__subject__name',)
+    search_fields = ('lesson',)
+    ordering = ('lesson',)
     list_per_page = 15
 
 @admin.register(QuizAttempt)
 class QuizAttemptAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'score', 'completed', 'lesson')
-    search_fields = ('user__username', 'lesson__subject__name', 'lesson__title', 'score')
+    search_fields = ('user',)
     ordering = ('-score',)
     list_per_page = 15
