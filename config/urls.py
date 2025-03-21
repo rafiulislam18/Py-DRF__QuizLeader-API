@@ -10,9 +10,16 @@ schema_view = get_schema_view(
     openapi.Info(
         title="QuizLeader API",
         default_version='v1',
-        description="API documentation for QuizLeader API \n GitHub Repo (codes): https://github.com/rafiulislam18/Py-DRF__QuizLeader-API/",
-        terms_of_service="https://www.example.com/",
-        contact=openapi.Contact(email="email@example.com"),
+        description=(
+            "API documentation for QuizLeader API\n"
+            "GitHub Profile: https://github.com/rafiulislam18/\n"
+            "GitHub Repo (codes): https://github.com/rafiulislam18/Py-DRF__QuizLeader-API/"
+        ),
+        terms_of_service=(
+            "https://github.com/rafiulislam18/Py-DRF__QuizLeader-API"
+            "?tab=readme-ov-file#terms-of-service"
+        ),
+        contact=openapi.Contact(email="cmmnacrafiulislam0170@gmail.com"),
         license=openapi.License(name="BSD License"),
     ),
     public=True,
