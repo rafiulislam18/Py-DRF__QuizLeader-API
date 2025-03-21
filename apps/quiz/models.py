@@ -1,6 +1,6 @@
 from django.db import models
-from django.contrib.auth import get_user_model
 from django.db.models import Index
+from django.contrib.auth import get_user_model
 
 
 User = get_user_model()
@@ -22,7 +22,11 @@ class Subject(models.Model):
 # Lesson within a subject
 class Lesson(models.Model):
     title = models.CharField(max_length=200)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name='lessons')
+    subject = models.ForeignKey(
+        Subject,
+        on_delete=models.CASCADE,
+        related_name='lessons'
+    )
 
     def __str__(self):
         return f"(Sub: {self.subject.name}) {self.title}"
@@ -30,7 +34,10 @@ class Lesson(models.Model):
     class Meta:
         unique_together = ('subject', 'title')
         indexes = [
-            Index(fields=['subject', 'title'], name='lesson_subject_title_idx'),
+            Index(
+                fields=['subject', 'title'],
+                name='lesson_subject_title_idx'
+            ),
         ]
 
 
@@ -38,8 +45,14 @@ class Lesson(models.Model):
 class Question(models.Model):
     text = models.TextField()
     options = models.JSONField()  # Store 3 options as JSON: {"1": "option1", "2": "option2", "3": "option3"}
-    correct_answer = models.IntegerField(choices=[(1, '1'), (2, '2'), (3, '3')])
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='questions')
+    correct_answer = models.IntegerField(
+        choices=[(1, '1'), (2, '2'), (3, '3')]
+    )
+    lesson = models.ForeignKey(
+        Lesson,
+        on_delete=models.CASCADE,
+        related_name='questions'
+    )
 
     def __str__(self):
         return f"(Lesson ID: {self.lesson.id}) Q: {self.text[:50]}..."
@@ -51,8 +64,12 @@ class Question(models.Model):
         
     def save(self, *args, **kwargs):
         # Ensure exactly 3 options
-        if len(self.options) != 3 or not all(str(i) in self.options for i in range(1, 4)):
+        if (
+            len(self.options) != 3
+            or not all(str(i) in self.options for i in range(1, 4))
+        ):
             raise ValueError("Question must have exactly 3 options")
+        
         super().save(*args, **kwargs)
 
 
@@ -69,6 +86,9 @@ class QuizAttempt(models.Model):
     
     class Meta:
         indexes = [
-            Index(fields=['user', 'lesson'], name='attempt_user_lesson_idx'),
+            Index(
+                fields=['user', 'lesson'],
+                name='attempt_user_lesson_idx'
+            ),
             Index(fields=['score'], name='attempt_score_idx'),
         ]

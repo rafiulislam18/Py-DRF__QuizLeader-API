@@ -1,5 +1,14 @@
 from django.urls import path
-from .views import QuizStartView, QuizSubmitView, SubjectLeaderboardView, GlobalLeaderboardView, SubjectView, LessonView, QuestionView
+
+from .views import (
+    QuizStartView,
+    QuizSubmitView,
+    SubjectLeaderboardView,
+    GlobalLeaderboardView,
+    SubjectView,
+    LessonView,
+    QuestionView
+)
 
 
 urlpatterns = [

@@ -1,19 +1,48 @@
+import random
+import logging
+
+from django.db import transaction
+from django.core.cache import cache
+from django.db.models import Max, Avg, Count, F
+from django.core.exceptions import ValidationError as DjangoValidationError
+
+from rest_framework import status
+from rest_framework.exceptions import ValidationError, NotFound
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Max, Avg, Count, F
-from .models import Subject, Lesson, Question, QuizAttempt
-from .serializers import SubjectSerializer, LessonSerializer, LessonResponseSerializer, QuestionSerializer, QuestionResponseSerializer, QuizStartResponseSerializer, QuizSubmitSerializer, QuizSubmitResponseSerializer, LeaderboardResponseSerializer, LeaderboardPaginatedResponseSerializer, QuestionPaginatedResponseSerializer, SubjectPaginatedResponseSerializer, LessonPaginatedResponseSerializer
-from django.db import transaction
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.exceptions import ValidationError, NotFound
-from django.core.exceptions import ValidationError as DjangoValidationError
-from drf_yasg.utils import swagger_auto_schema
+
 from drf_yasg import openapi
-import random
-from .paginators import SubjectListPagination, LessonListPagination, QuestionListPagination, SubjectLeaderboardPagination, GlobalLeaderboardPagination
-from django.core.cache import cache
-import logging
+from drf_yasg.utils import swagger_auto_schema
+
+from .models import (
+    Subject,
+    Lesson,
+    Question,
+    QuizAttempt
+)
+from .serializers import (
+    SubjectSerializer,
+    LessonSerializer,
+    LessonResponseSerializer,
+    QuestionSerializer,
+    QuestionResponseSerializer,
+    QuizStartResponseSerializer,
+    QuizSubmitSerializer,
+    QuizSubmitResponseSerializer,
+    LeaderboardResponseSerializer,
+    LeaderboardPaginatedResponseSerializer,
+    QuestionPaginatedResponseSerializer,
+    SubjectPaginatedResponseSerializer,
+    LessonPaginatedResponseSerializer
+)
+from .paginators import (
+    SubjectListPagination,
+    LessonListPagination,
+    QuestionListPagination,
+    SubjectLeaderboardPagination,
+    GlobalLeaderboardPagination
+)
 
 
 # Create a logger instance
@@ -26,7 +55,9 @@ class QuizStartView(APIView):
     # Start a new quiz with randomized questions for a lesson
     @swagger_auto_schema(
         tags=["Quiz-Game"],
-        operation_description="Start a new quiz with up to 15 randomized questions for a lesson",
+        operation_description=(
+            "Start a new quiz with up to 15 randomized questions for a lesson"
+        ),
         manual_parameters=[
             openapi.Parameter(
                 'lesson_id',
@@ -37,7 +68,10 @@ class QuizStartView(APIView):
             )
         ],
         responses={
-            200: openapi.Response('Success: Quiz start successful', QuizStartResponseSerializer),
+            200: openapi.Response(
+                'Success: Quiz start successful',
+                QuizStartResponseSerializer
+            ),
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             404: 'Error: Not found',
@@ -49,7 +83,9 @@ class QuizStartView(APIView):
             lesson = Lesson.objects.get(id=lesson_id)
 
             # Get a list of question IDs for the lesson
-            question_ids = list(lesson.questions.values_list('id', flat=True))
+            question_ids = list(
+                lesson.questions.values_list('id', flat=True)
+            )
             
             # Select random IDs (up to 15)
             selected_ids = random.sample(
@@ -85,7 +121,12 @@ class QuizStartView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in QuizStartView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuizStartView.post(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -98,7 +139,10 @@ class QuizSubmitView(APIView):
     # Submit quiz answers, calculate score & update user profile
     @swagger_auto_schema(
         tags=["Quiz-Game"],
-        operation_description="Submit quiz answers & get score (get attempt_id by starting a quiz)",
+        operation_description=(
+            "Submit quiz answers & get score "
+            "(get attempt_id by starting a quiz)"
+        ),
         manual_parameters=[
             openapi.Parameter(
                 'attempt_id',
@@ -127,7 +171,10 @@ class QuizSubmitView(APIView):
             }
         ),
         responses={
-            200: openapi.Response('Success: Quiz answers submition successful', QuizSubmitResponseSerializer),
+            200: openapi.Response(
+                'Success: Quiz answers submition successful',
+                QuizSubmitResponseSerializer
+            ),
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             404: 'Error: Not found',
@@ -188,7 +235,12 @@ class QuizSubmitView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in QuizSubmitView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuizSubmitView.post(): {str(e)}",
+                exc_info=True
+            )  
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -221,13 +273,19 @@ class SubjectLeaderboardView(APIView):
             openapi.Parameter(
                 'page_size',
                 openapi.IN_QUERY,
-                description=f"Number of results per page (default: {SubjectLeaderboardPagination.page_size}, max: {SubjectLeaderboardPagination.max_page_size})",
+                description=(
+                    f"Number of results per page (default: {SubjectLeaderboardPagination.page_size}, "
+                    f"max: {SubjectLeaderboardPagination.max_page_size})"
+                ),
                 type=openapi.TYPE_INTEGER,
                 required=False
             )
         ],
         responses={
-            200: openapi.Response('Success: Get subject-specific leaderboard successful', LeaderboardPaginatedResponseSerializer),
+            200: openapi.Response(
+                'Success: Get subject-specific leaderboard successful',
+                LeaderboardPaginatedResponseSerializer
+            ),
             400: 'Error: Bad request',
             404: 'Error: Not found',
             500: 'Error: Internal server error'
@@ -276,7 +334,12 @@ class SubjectLeaderboardView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in SubjectLeaderboardView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectLeaderboardView.get(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -290,7 +353,9 @@ class GlobalLeaderboardView(APIView):
     # Get global leaderboard (top 25) accross all lessons
     @swagger_auto_schema(
         tags=["Quiz-Leaderboard"],
-        operation_description="Get global leaderboard (top 25 players) across all lessons",
+        operation_description=(
+            "Get global leaderboard (top 25 players) across all lessons"
+        ),
         manual_parameters=[
             openapi.Parameter(
                 'page',
@@ -302,13 +367,19 @@ class GlobalLeaderboardView(APIView):
             openapi.Parameter(
                 'page_size',
                 openapi.IN_QUERY,
-                description=f"Number of results per page (default: {GlobalLeaderboardPagination.page_size}, max: {GlobalLeaderboardPagination.max_page_size})",
+                description=(
+                    f"Number of results per page (default: {GlobalLeaderboardPagination.page_size}, "
+                    f"max: {GlobalLeaderboardPagination.max_page_size})"
+                ),
                 type=openapi.TYPE_INTEGER,
                 required=False
             )
         ],
         responses={
-            200: openapi.Response('Success: Get global leaderboard successful', LeaderboardPaginatedResponseSerializer),
+            200: openapi.Response(
+                'Success: Get global leaderboard successful',
+                LeaderboardPaginatedResponseSerializer
+            ),
             400: 'Error: Bad request',
             500: 'Error: Internal server error'
         }
@@ -343,7 +414,12 @@ class GlobalLeaderboardView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in GlobalLeaderboardView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in GlobalLeaderboardView.get(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -376,13 +452,19 @@ class SubjectView(APIView):
             openapi.Parameter(
                 'page_size',
                 openapi.IN_QUERY,
-                description=f"Number of results per page (default: {SubjectListPagination.page_size}, max: {SubjectListPagination.max_page_size})",
+                description=(
+                    f"Number of results per page (default: {SubjectListPagination.page_size}, "
+                    f"max: {SubjectListPagination.max_page_size})"
+                ),
                 type=openapi.TYPE_INTEGER,
                 required=False
             )
         ],
         responses={
-            200: openapi.Response('Success: Get subjects successful', SubjectPaginatedResponseSerializer),
+            200: openapi.Response(
+                'Success: Get subjects successful',
+                SubjectPaginatedResponseSerializer
+            ),
             400: 'Error: Bad Request',
             404: 'Error: Not found',
             500: 'Error: Internal server error'
@@ -394,7 +476,10 @@ class SubjectView(APIView):
             page_number = request.query_params.get('page', 1)
 
             # Get page size from request, default to the pagination class default
-            page_size = request.query_params.get('page_size', self.pagination_class.page_size)
+            page_size = request.query_params.get(
+                'page_size',
+                self.pagination_class.page_size
+            )
 
             cache_key = self.get_cache_key(page_number, page_size)  # Unique key for caching subjects
             subjects = cache.get(cache_key)  # Try getting cached data
@@ -429,7 +514,12 @@ class SubjectView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in SubjectView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectView.get(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -441,7 +531,10 @@ class SubjectView(APIView):
         operation_description="Create a new subject",
         request_body=SubjectSerializer,
         responses={
-            201: openapi.Response('Success: Subject creation successful', SubjectSerializer),
+            201: openapi.Response(
+                'Success: Subject creation successful',
+                SubjectSerializer
+            ),
             400: 'Error: Bad Request',
             401: 'Error: Unauthorized',
             500: 'Error: Internal server error'
@@ -463,7 +556,12 @@ class SubjectView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in SubjectView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectView.post(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -503,13 +601,19 @@ class LessonView(APIView):
             openapi.Parameter(
                 'page_size',
                 openapi.IN_QUERY,
-                description=f"Number of results per page (default: {LessonListPagination.page_size}, max: {LessonListPagination.max_page_size})",
+                description=(
+                    f"Number of results per page (default: {LessonListPagination.page_size}, "
+                    f"max: {LessonListPagination.max_page_size})"
+                ),
                 type=openapi.TYPE_INTEGER,
                 required=False
             )
         ],
         responses={
-            200: openapi.Response('Success: Get lessons successful', LessonPaginatedResponseSerializer),
+            200: openapi.Response(
+                'Success: Get lessons successful',
+                LessonPaginatedResponseSerializer
+            ),
             400: 'Error: Bad Request',
             404: 'Error: Not found',
             500: 'Error: Internal server error'
@@ -521,7 +625,10 @@ class LessonView(APIView):
             page_number = request.query_params.get('page', 1)
 
             # Get page size from request, default to the pagination class default
-            page_size = request.query_params.get('page_size', self.pagination_class.page_size)
+            page_size = request.query_params.get(
+                'page_size',
+                self.pagination_class.page_size
+            )
 
             cache_key = self.get_cache_key(subject_id, page_number, page_size)  # Unique key for caching lessons
             lessons = cache.get(cache_key)  # Try getting cached data
@@ -556,7 +663,12 @@ class LessonView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in LessonView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in LessonView.get(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -577,7 +689,10 @@ class LessonView(APIView):
         ],
         request_body=LessonSerializer,
         responses={
-            201: openapi.Response('Success: Lesson creation successful', LessonResponseSerializer),
+            201: openapi.Response(
+                'Success: Lesson creation successful',
+                LessonResponseSerializer
+            ),
             400: 'Error: Bad Request',
             401: 'Error: Unauthorized',
             404: 'Error: Not found',
@@ -593,7 +708,11 @@ class LessonView(APIView):
             lesson = serializer.save(subject=subject)
 
             cache.clear()  # Invalidate cache as database updated
-            return Response(LessonResponseSerializer(lesson).data, status=status.HTTP_201_CREATED)
+
+            return Response(
+                LessonResponseSerializer(lesson).data,
+                status=status.HTTP_201_CREATED
+            )
         
         except Subject.DoesNotExist:
             return Response(
@@ -608,7 +727,12 @@ class LessonView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in LessonView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in LessonView.post(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -648,13 +772,19 @@ class QuestionView(APIView):
             openapi.Parameter(
                 'page_size',
                 openapi.IN_QUERY,
-                description=f"Number of results per page (default: {QuestionListPagination.page_size}, max: {QuestionListPagination.max_page_size})",
+                description=(
+                    f"Number of results per page (default: {QuestionListPagination.page_size}, "
+                    f"max: {QuestionListPagination.max_page_size})"
+                ),
                 type=openapi.TYPE_INTEGER,
                 required=False
             )
         ],
         responses={
-            200: openapi.Response('Success: Get questions successful', QuestionPaginatedResponseSerializer),
+            200: openapi.Response(
+                'Success: Get questions successful',
+                QuestionPaginatedResponseSerializer
+            ),
             400: 'Error: Bad Request',
             404: 'Error: Not found',
             500: 'Error: Internal server error'
@@ -666,7 +796,10 @@ class QuestionView(APIView):
             page_number = request.query_params.get('page', 1)
 
             # Get page size from request, default to the pagination class default
-            page_size = request.query_params.get('page_size', self.pagination_class.page_size)
+            page_size = request.query_params.get(
+                'page_size',
+                self.pagination_class.page_size
+            )
             
             cache_key = self.get_cache_key(lesson_id, page_number, page_size)  # Unique key for caching questions
             questions = cache.get(cache_key)  # Try getting cached data
@@ -701,7 +834,12 @@ class QuestionView(APIView):
             )
 
         except Exception as e:
-            logger.error(f"Error in QuestionView.get(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuestionView.get(): {str(e)}",
+                exc_info=True
+            )
+
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -754,7 +892,10 @@ class QuestionView(APIView):
             }
         ),
         responses={
-            201: openapi.Response('Success: Question creation successful', QuestionResponseSerializer),
+            201: openapi.Response(
+                'Success: Question creation successful',
+                QuestionResponseSerializer
+            ),
             400: 'Error: Bad Request',
             401: 'Error: Unauthorized',
             404: 'Error: Not found',
@@ -770,7 +911,11 @@ class QuestionView(APIView):
             question = serializer.save(lesson=lesson)
 
             cache.clear()  # Invalidate cache as database updated
-            return Response(QuestionResponseSerializer(question).data, status=status.HTTP_201_CREATED)
+
+            return Response(
+                QuestionResponseSerializer(question).data,
+                status=status.HTTP_201_CREATED
+            )
         
         except Lesson.DoesNotExist:
             return Response(
@@ -791,7 +936,12 @@ class QuestionView(APIView):
             )
         
         except Exception as e:
-            logger.error(f"Error in QuestionView.post(): {str(e)}", exc_info=True)  # Log the error for debugging
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuestionView.post(): {str(e)}",
+                exc_info=True
+            )
+            
             return Response(
                 {"detail": "An error occurred while processing your request."},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from .models import Question, QuizAttempt, Subject, Lesson
 from rest_framework.exceptions import ValidationError
+
+from .models import Question, QuizAttempt, Subject, Lesson
 
 
 class SubjectSerializer(serializers.ModelSerializer):
@@ -71,12 +72,23 @@ class QuestionSerializer(serializers.ModelSerializer):
 
     def validate_options(self, value):
         # Ensure exactly 3 options with keys '1', '2', '3'
-        if not (isinstance(value, dict) and len(value) == 3 and all(str(i) in value for i in range(1, 4))):
-            raise serializers.ValidationError('Must provide exactly 3 options numbered 1-3. Example: {"1": "option1", "2": "option2", "3": "option3"}. Please check documentation for example.')
+        if not (
+            isinstance(value, dict)
+            and len(value) == 3
+            and all(str(i) in value for i in range(1, 4))
+        ):
+            raise serializers.ValidationError(
+                'Must provide exactly 3 options numbered 1-3.'
+                'Example: {"1": "option1", "2": "option2", "3": "option3"}.'
+                'Please check documentation for example.'
+            )
         
         # Ensure no empty options
         if any(not option.strip() for option in value.values()):
-            raise serializers.ValidationError('Options cannot be empty. Please check documentation for example.')
+            raise serializers.ValidationError(
+                'Options cannot be empty.'
+                'Please check documentation for example.'
+            )
         
         return value
 
@@ -126,15 +138,24 @@ class QuizSubmitSerializer(serializers.Serializer):
 
     def validate_answers(self, value):
         if len(value) == 0:
-            raise ValidationError("Answers dictionary cannot be empty. Please check documentation for example.")
+            raise ValidationError(
+                "Answers dictionary cannot be empty."
+                "Please check documentation for example."
+            )
         
         # Check if payload format is correct
         for question_id, selected_option in value.items():
             if not question_id.isdigit() or not selected_option.isdigit():
-                raise ValidationError("Invalid input format. Please check documentation for example.")
+                raise ValidationError(
+                    "Invalid input format."
+                    "Please check documentation for example."
+                )
             # Check if selected option is valid (1, 2, or 3)
             if int(selected_option) not in [1, 2, 3]:
-                raise ValidationError(f"Invalid option for question {question_id}. Must be 1, 2, or 3. Please check documentation for example.")
+                raise ValidationError(
+                    f"Invalid option for question {question_id}. Must be 1, 2, or 3. "
+                    "Please check documentation for example."
+                )
         
         # Check if all question IDs are valid
         valid_question_ids = set(str(q.id) for q in Question.objects.all())
@@ -153,10 +174,18 @@ class QuizSubmitResponseSerializer(serializers.ModelSerializer):
 
 
 class LeaderboardResponseSerializer(serializers.Serializer):
-    username = serializers.CharField(help_text="Username of the player")
-    high_score = serializers.IntegerField(help_text="Highest score achieved")
-    avg_score = serializers.FloatField(help_text="Average score across all quiz play attempts")
-    total_played = serializers.IntegerField(help_text="Total number of quiz play attempts")
+    username = serializers.CharField(
+        help_text="Username of the player"
+    )
+    high_score = serializers.IntegerField(
+        help_text="Highest score achieved"
+    )
+    avg_score = serializers.FloatField(
+        help_text="Average score across all quiz play attempts"
+    )
+    total_played = serializers.IntegerField(
+        help_text="Total number of quiz play attempts"
+    )
 
 
 class LeaderboardPaginatedResponseSerializer(serializers.Serializer):
