@@ -43,6 +43,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",  # For anonymous users
+        "utils.throttles.AdminExemptUserRateThrottle",  # For authenticated users (exempts staff & superusers)
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "20/minute",  # Limit for anonymous users
+        "user": "45/minute",  # Limit for authenticated users (except staff & superusers)
+    },
 }
 
 SIMPLE_JWT = {
