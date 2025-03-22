@@ -49,7 +49,7 @@ class QuestionView(APIView):
         ],
         responses={
             200: openapi.Response(
-                'Success: Get questions successful',
+                'Success: Ok',
                 QuestionPaginatedResponseSerializer
             ),
             400: 'Error: Bad Request',
@@ -161,7 +161,7 @@ class QuestionView(APIView):
         ),
         responses={
             201: openapi.Response(
-                'Success: Question creation successful',
+                'Success: Created',
                 QuestionResponseSerializer
             ),
             400: 'Error: Bad Request',

@@ -32,7 +32,7 @@ class QuizStartView(APIView):
         ],
         responses={
             200: openapi.Response(
-                'Success: Quiz start successful',
+                'Success: Ok',
                 QuizStartResponseSerializer
             ),
             400: 'Error: Bad request',
@@ -67,10 +67,13 @@ class QuizStartView(APIView):
                 score=0
             )
             
-            return Response({
-                'attempt_id': attempt.id,
-                'questions': QuestionResponseSerializer(questions, many=True).data
-            })
+            return Response(
+                {
+                    'attempt_id': attempt.id,
+                    'questions': QuestionResponseSerializer(questions, many=True).data
+                },
+                status=status.HTTP_200_OK
+            )
         
         except Lesson.DoesNotExist:
             return Response(
@@ -136,7 +139,7 @@ class QuizSubmitView(APIView):
         ),
         responses={
             200: openapi.Response(
-                'Success: Quiz answers submition successful',
+                'Success: Ok',
                 QuizSubmitResponseSerializer
             ),
             400: 'Error: Bad request',
@@ -185,7 +188,10 @@ class QuizSubmitView(APIView):
             user.highest_score = max(user.highest_score, score)
             user.save()
             
-            return Response(QuizSubmitResponseSerializer(attempt).data)
+            return Response(
+                QuizSubmitResponseSerializer(attempt).data,
+                status=status.HTTP_200_OK
+            )
         
         except QuizAttempt.DoesNotExist:
             return Response(

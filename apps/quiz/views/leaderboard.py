@@ -48,7 +48,7 @@ class SubjectLeaderboardView(APIView):
         ],
         responses={
             200: openapi.Response(
-                'Success: Get subject-specific leaderboard successful',
+                'Success: Ok',
                 LeaderboardPaginatedResponseSerializer
             ),
             400: 'Error: Bad request',
@@ -143,7 +143,7 @@ class GlobalLeaderboardView(APIView):
         ],
         responses={
             200: openapi.Response(
-                'Success: Get global leaderboard successful',
+                'Success: Ok',
                 LeaderboardPaginatedResponseSerializer
             ),
             400: 'Error: Bad request',

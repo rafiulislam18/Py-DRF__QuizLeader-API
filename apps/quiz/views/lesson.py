@@ -47,7 +47,7 @@ class LessonView(APIView):
         ],
         responses={
             200: openapi.Response(
-                'Success: Get lessons successful',
+                'Success: Ok',
                 LessonPaginatedResponseSerializer
             ),
             400: 'Error: Bad Request',
@@ -127,7 +127,7 @@ class LessonView(APIView):
         request_body=LessonSerializer,
         responses={
             201: openapi.Response(
-                'Success: Lesson creation successful',
+                'Success: Created',
                 LessonResponseSerializer
             ),
             400: 'Error: Bad Request',

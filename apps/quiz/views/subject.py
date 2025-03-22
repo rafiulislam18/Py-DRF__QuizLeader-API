@@ -39,7 +39,7 @@ class SubjectView(APIView):
         ],
         responses={
             200: openapi.Response(
-                'Success: Get subjects successful',
+                'Success: Ok',
                 SubjectPaginatedResponseSerializer
             ),
             400: 'Error: Bad Request',
@@ -110,10 +110,10 @@ class SubjectView(APIView):
         request_body=SubjectSerializer,
         responses={
             201: openapi.Response(
-                'Success: Subject creation successful',
+                'Success: Created',
                 SubjectSerializer
             ),
-            400: 'Error: Bad Request',
+            400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             429: 'Error: Too many requests',
             500: 'Error: Internal server error'
