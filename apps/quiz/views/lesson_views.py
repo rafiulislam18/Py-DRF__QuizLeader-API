@@ -9,12 +9,8 @@ from ..serializers import (
 
 
 class LessonView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = LessonListPagination
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [AllowAny()]
-        return [IsAuthenticated()]
     
     def get_cache_key(self, subject_id, page_number, page_size):
         return f'lessons_for_subject_{subject_id}_page_{page_number}_size_{page_size}'
@@ -22,7 +18,7 @@ class LessonView(APIView):
     # Get/retrieve all lessons for a subject
     @swagger_auto_schema(
         tags=["Quiz-Lessons"],
-        operation_description="Get/retrieve all lessons of a subject",
+        operation_description="Get/retrieve all lessons within a subject",
         manual_parameters=[
             openapi.Parameter(
                 'subject_id',

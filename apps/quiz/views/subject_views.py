@@ -8,12 +8,8 @@ from ..serializers import (
 
 
 class SubjectView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = SubjectListPagination
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [AllowAny()]
-        return [IsAuthenticated()]
     
     def get_cache_key(self, page_number, page_size):
         return f'subject_page_{page_number}_size_{page_size}'

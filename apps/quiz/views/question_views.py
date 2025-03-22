@@ -11,12 +11,8 @@ from ..serializers import (
 
 
 class QuestionView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
     pagination_class = QuestionListPagination
-
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [AllowAny()]
-        return [IsAuthenticated()]
     
     def get_cache_key(self, lesson_id, page_number, page_size):
         return f'questions_for_lesson_{lesson_id}_page_{page_number}_size_{page_size}'
@@ -24,7 +20,7 @@ class QuestionView(APIView):
     # Get/retrieve all questions for a lesson
     @swagger_auto_schema(
         tags=["Quiz-Questions"],
-        operation_description="Get/retrieve all questions of a lesson",
+        operation_description="Get/retrieve all questions within a lesson",
         manual_parameters=[
             openapi.Parameter(
                 'lesson_id',
