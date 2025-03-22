@@ -32,4 +32,6 @@ LOGGING['handlers']['file']['level'] = 'INFO'
 LOGGING['handlers']['file']['filename'] = os.path.join(LOGS_DIR, 'prod.log')
 
 for logger in LOGGING['loggers'].values():
-    logger['level'] = 'ERROR'
+    logger['level'] = 'WARNING'
+
+LOGGING['loggers']['django']['level'] = 'ERROR'
