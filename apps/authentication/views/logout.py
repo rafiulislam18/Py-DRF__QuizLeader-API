@@ -1,7 +1,6 @@
 from .base import *
 from ..serializers import (
-    LogoutSerializer,
-    LogoutResponseSerializer
+    LogoutSerializer
 )
 
 
@@ -15,10 +14,7 @@ class LogoutView(APIView):
         operation_description="Logout user by refresh token",
         request_body=LogoutSerializer,
         responses={
-            200: openapi.Response(
-                'Success: Logout successful',
-                LogoutResponseSerializer
-            ),
+            204: 'Success: No content',
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             429: 'Error: Too many requests',
@@ -34,11 +30,9 @@ class LogoutView(APIView):
             token = RefreshToken(refresh_token)
             token.blacklist()  # Blacklist the refresh token
 
-            response = {"detail": "Logout successful."}
-
             return Response(
-                LogoutResponseSerializer(response).data,
-                status=status.HTTP_200_OK
+                {"detail": "Logout successful."},
+                status=status.HTTP_204_NO_CONTENT
             )
         
         except ValidationError as e:

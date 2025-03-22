@@ -20,7 +20,7 @@ class MyTokenRefreshView(TokenRefreshView):
         ),
         responses={
             200: openapi.Response(
-                'Success: Token refresh successful',
+                'Success: Ok',
                 TokenRefreshResponseSerializer
             ),
             401: 'Error: Unauthorized',

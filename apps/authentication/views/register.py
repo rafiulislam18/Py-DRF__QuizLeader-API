@@ -17,7 +17,7 @@ class RegisterView(APIView):
         request_body=RegisterSerializer,
         responses={
             201: openapi.Response(
-                'Success: Registration successful',
+                'Success: Created',
                 RegisterResponseSerializer
             ),
             400: 'Error: Bad request',

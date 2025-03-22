@@ -17,7 +17,7 @@ class LoginView(APIView):
         request_body=LoginSerializer,
         responses={
             200: openapi.Response(
-                'Success: Login successful',
+                'Success: Ok',
                 LoginResponseSerializer
             ),
             400: 'Error: Bad request',
