@@ -58,7 +58,7 @@ class SubjectLeaderboardView(APIView):
     )
     def get(self, request, subject_id):
         try:
-            attempts = QuizAttempt.objects.filter(
+            leaderboard_data = QuizAttempt.objects.filter(
                 lesson__subject__id=subject_id,  # Filter by subject through lesson
                 completed=True
             ).values(username=F('user__username')).annotate(
@@ -67,7 +67,7 @@ class SubjectLeaderboardView(APIView):
                 total_played=Count('id')
             ).order_by('-high_score')[:10]
 
-            if not attempts.exists():
+            if not leaderboard_data.exists():
                 return Response(
                         {"detail": "No data found for the given subject."},
                         status=status.HTTP_404_NOT_FOUND
@@ -75,7 +75,7 @@ class SubjectLeaderboardView(APIView):
 
             # Enforce pagination
             paginator = self.pagination_class()
-            page = paginator.paginate_queryset(attempts, request)
+            page = paginator.paginate_queryset(leaderboard_data, request)
             if page is not None:
                 serializer = LeaderboardResponseSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)
@@ -146,12 +146,13 @@ class GlobalLeaderboardView(APIView):
                 LeaderboardPaginatedResponseSerializer
             ),
             400: 'Error: Bad request',
+            404: 'Error: Not found',
             500: 'Error: Internal server error'
         }
     )
     def get(self, request):
         try:
-            attempts = QuizAttempt.objects.filter(
+            leaderboard_data = QuizAttempt.objects.filter(
                 completed=True
             ).values(username=F('user__username')).annotate(
                 high_score=Max('score'),
@@ -159,9 +160,15 @@ class GlobalLeaderboardView(APIView):
                 total_played=Count('id')
             ).order_by('-high_score')[:25]
 
+            if not leaderboard_data.exists():
+                return Response(
+                    {"detail": "No data found."},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
             # Enforce pagination
             paginator = self.pagination_class()
-            page = paginator.paginate_queryset(attempts, request)
+            page = paginator.paginate_queryset(leaderboard_data, request)
             if page is not None:
                 serializer = LeaderboardResponseSerializer(page, many=True)
                 return paginator.get_paginated_response(serializer.data)
