@@ -8,6 +8,7 @@ from ..serializers import (
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [HighLimitAnonRateThrottle]
 
     # Handle user login and return JWT tokens
     @swagger_auto_schema(
@@ -20,6 +21,7 @@ class LoginView(APIView):
                 LoginResponseSerializer
             ),
             400: 'Error: Bad request',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )

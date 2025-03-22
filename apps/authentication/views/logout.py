@@ -7,6 +7,7 @@ from ..serializers import (
 
 class LogoutView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [HighLimitAnonRateThrottle]
 
     # Handle user logout
     @swagger_auto_schema(
@@ -20,6 +21,7 @@ class LogoutView(APIView):
             ),
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )

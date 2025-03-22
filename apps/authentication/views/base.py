@@ -12,6 +12,8 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
+from ..throttles import HighLimitAnonRateThrottle
+
 
 # Create a logger instance
 logger = logging.getLogger(__name__)

@@ -8,6 +8,7 @@ from ..serializers import (
 
 class MyTokenRefreshView(TokenRefreshView):
     permission_classes = [AllowAny]
+    throttle_classes = [HighLimitAnonRateThrottle]
 
     # Handle token refresh
     @swagger_auto_schema(
@@ -23,6 +24,7 @@ class MyTokenRefreshView(TokenRefreshView):
                 TokenRefreshResponseSerializer
             ),
             401: 'Error: Unauthorized',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )

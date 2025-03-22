@@ -3,10 +3,12 @@ from ..serializers import (
     RegisterSerializer,
     RegisterResponseSerializer
 )
+from ..throttles import RegisterThrottle
 
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
+    throttle_classes = [RegisterThrottle]
 
     # Register a new user
     @swagger_auto_schema(
@@ -19,6 +21,7 @@ class RegisterView(APIView):
                 RegisterResponseSerializer
             ),
             400: 'Error: Bad request',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )
