@@ -38,6 +38,7 @@ class QuizStartView(APIView):
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             404: 'Error: Not found',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )
@@ -141,6 +142,7 @@ class QuizSubmitView(APIView):
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             404: 'Error: Not found',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )

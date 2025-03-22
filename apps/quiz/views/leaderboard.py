@@ -53,6 +53,7 @@ class SubjectLeaderboardView(APIView):
             ),
             400: 'Error: Bad request',
             404: 'Error: Not found',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )
@@ -147,6 +148,7 @@ class GlobalLeaderboardView(APIView):
             ),
             400: 'Error: Bad request',
             404: 'Error: Not found',
+            429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
     )
