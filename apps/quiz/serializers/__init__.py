@@ -1,5 +1,5 @@
-from .subject_serializers import *
-from .lesson_serializers import *
-from .question_serializers import *
-from .quiz_serializers import *
-from .leaderboard_serializers import *
+from .subject import SubjectSerializer, SubjectPaginatedResponseSerializer
+from .lesson import LessonSerializer, LessonResponseSerializer, LessonPaginatedResponseSerializer
+from .question import QuestionSerializer, QuestionResponseSerializer, QuestionPaginatedResponseSerializer
+from .quiz import QuizStartResponseSerializer, QuizSubmitSerializer, QuizSubmitResponseSerializer
+from .leaderboard import LeaderboardResponseSerializer, LeaderboardPaginatedResponseSerializer

@@ -1,5 +1,5 @@
-from .quiz_views import QuizStartView, QuizSubmitView
-from .leaderboard_views import SubjectLeaderboardView, GlobalLeaderboardView
-from .subject_views import SubjectView
-from .lesson_views import LessonView
-from .question_views import QuestionView
+from .quiz import QuizStartView, QuizSubmitView
+from .leaderboard import SubjectLeaderboardView, GlobalLeaderboardView
+from .subject import SubjectView
+from .lesson import LessonView
+from .question import QuestionView

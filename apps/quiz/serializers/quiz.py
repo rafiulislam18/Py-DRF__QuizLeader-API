@@ -2,8 +2,8 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
 from ..models import Question, QuizAttempt
-from .question_serializers import QuestionResponseSerializer
-from .lesson_serializers import LessonResponseSerializer
+from .question import QuestionResponseSerializer
+from .lesson import LessonResponseSerializer
 
 
 class QuizStartResponseSerializer(serializers.Serializer):

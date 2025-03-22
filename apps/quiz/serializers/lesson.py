@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from ..models import Lesson
-from .subject_serializers import SubjectSerializer
+from .subject import SubjectSerializer
 
 
 class LessonSerializer(serializers.ModelSerializer):
