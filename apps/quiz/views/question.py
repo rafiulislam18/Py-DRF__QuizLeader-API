@@ -166,6 +166,7 @@ class QuestionView(APIView):
             ),
             400: 'Error: Bad Request',
             401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
             404: 'Error: Not found',
             429: 'Error: Too many requests',
             500: 'Error: Internal server error'

@@ -115,6 +115,7 @@ class SubjectView(APIView):
             ),
             400: 'Error: Bad request',
             401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
             429: 'Error: Too many requests',
             500: 'Error: Internal server error'
         }
