@@ -8,7 +8,7 @@ from ..serializers import (
 )
 
 
-class LessonView(APIView):
+class LessonListCreateView(APIView):
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = LessonListPagination
     
@@ -102,7 +102,7 @@ class LessonView(APIView):
         except Exception as e:
             # Log the error for debugging
             logger.error(
-                f"Error in LessonView.get(): {str(e)}",
+                f"Error in LessonListCreateView.get(): {str(e)}",
                 exc_info=True
             )
 
@@ -168,7 +168,183 @@ class LessonView(APIView):
         except Exception as e:
             # Log the error for debugging
             logger.error(
-                f"Error in LessonView.post(): {str(e)}",
+                f"Error in LessonListCreateView.post(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class LessonDetailView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
+    # Update a lesson by ID using PUT method
+    @swagger_auto_schema(
+        tags=["Quiz-Lessons"],
+        operation_description="Update a lesson by ID using PUT method",
+        manual_parameters=[
+            openapi.Parameter(
+                'lesson_id',
+                openapi.IN_PATH,
+                description="ID of the lesson to update",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        request_body=LessonSerializer,
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                LessonResponseSerializer
+            ),
+            400: 'Error: Bad Request',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def put(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+
+            serializer = LessonSerializer(lesson, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Lesson.DoesNotExist:
+            return Response(
+                {"detail": "Lesson not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in LessonDetailView.put(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+    # Update a lesson by ID using PATCH method
+    @swagger_auto_schema(
+        tags=["Quiz-Lessons"],
+        operation_description="Update a lesson by ID using PATCH method",
+        manual_parameters=[
+            openapi.Parameter(
+                'lesson_id',
+                openapi.IN_PATH,
+                description="ID of the lesson to update",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        request_body=LessonSerializer,
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                LessonResponseSerializer
+            ),
+            400: 'Error: Bad Request',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def patch(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+
+            serializer = LessonSerializer(lesson, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Lesson.DoesNotExist:
+            return Response(
+                {"detail": "Lesson not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in LessonDetailView.patch(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+    # Delete a lesson by ID
+    @swagger_auto_schema(
+        tags=["Quiz-Lessons"],
+        operation_description="Delete a lesson by ID",
+        manual_parameters=[
+            openapi.Parameter(
+                'lesson_id',
+                openapi.IN_PATH,
+                description="ID of the lesson to delete",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            204: 'Success: No Content',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def delete(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+            lesson.delete()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
+        except Lesson.DoesNotExist:
+            return Response(
+                {"detail": "Lesson not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in LessonDetailView.delete(): {str(e)}",
                 exc_info=True
             )
 

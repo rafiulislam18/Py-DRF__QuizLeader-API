@@ -10,7 +10,7 @@ from ..serializers import (
 )
 
 
-class QuestionView(APIView):
+class QuestionListCreateView(APIView):
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = QuestionListPagination
     
@@ -104,7 +104,7 @@ class QuestionView(APIView):
         except Exception as e:
             # Log the error for debugging
             logger.error(
-                f"Error in QuestionView.get(): {str(e)}",
+                f"Error in QuestionListCreateView.get(): {str(e)}",
                 exc_info=True
             )
 
@@ -208,7 +208,265 @@ class QuestionView(APIView):
         except Exception as e:
             # Log the error for debugging
             logger.error(
-                f"Error in QuestionView.post(): {str(e)}",
+                f"Error in QuestionListCreateView.post(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class QuestionDetailView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
+    # Update a question by ID using PUT method
+    @swagger_auto_schema(
+        tags=["Quiz-Questions"],
+        operation_description="Update a question by ID using PUT method",
+        manual_parameters=[
+            openapi.Parameter(
+                'question_id',
+                openapi.IN_PATH,
+                description="ID of the question to update",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'text': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='The question text'
+                ),
+                'options': openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    description='Three options numbered 1-3',
+                    properties={
+                        '1': openapi.Schema(type=openapi.TYPE_STRING),
+                        '2': openapi.Schema(type=openapi.TYPE_STRING),
+                        '3': openapi.Schema(type=openapi.TYPE_STRING),
+                    },
+                    required=['1', '2', '3']
+                ),
+                'correct_answer': openapi.Schema(
+                    type=openapi.TYPE_INTEGER,
+                    description='The correct option number (1, 2, or 3)'
+                )
+            },
+            example={
+                "text": "What is the capital of France?",
+                "options": {
+                    "1": "Paris",
+                    "2": "London",
+                    "3": "Berlin"
+                },
+                "correct_answer": 1
+            }
+        ),
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                QuestionResponseSerializer
+            ),
+            400: 'Error: Bad Request',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def put(self, request, question_id):
+        try:
+            question = Question.objects.get(id=question_id)
+
+            serializer = QuestionSerializer(question, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            question = serializer.save()
+
+            cache.clear()  # Invalidate cache as database updated
+
+            return Response(
+                QuestionResponseSerializer(question).data,
+                status=status.HTTP_200_OK
+            )
+        
+        except Question.DoesNotExist:
+            return Response(
+                {"detail": "Question not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except DjangoValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuestionDetailView.put(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    # Update a question by ID using PATCH method
+    @swagger_auto_schema(
+        tags=["Quiz-Questions"],
+        operation_description="Update a question by ID using PUT method",
+        manual_parameters=[
+            openapi.Parameter(
+                'question_id',
+                openapi.IN_PATH,
+                description="ID of the question to update",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'text': openapi.Schema(
+                    type=openapi.TYPE_STRING,
+                    description='The question text'
+                ),
+                'options': openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    description='Three options numbered 1-3',
+                    properties={
+                        '1': openapi.Schema(type=openapi.TYPE_STRING),
+                        '2': openapi.Schema(type=openapi.TYPE_STRING),
+                        '3': openapi.Schema(type=openapi.TYPE_STRING),
+                    },
+                    required=['1', '2', '3']
+                ),
+                'correct_answer': openapi.Schema(
+                    type=openapi.TYPE_INTEGER,
+                    description='The correct option number (1, 2, or 3)'
+                )
+            },
+            example={
+                "text": "What is the capital of France?",
+                "options": {
+                    "1": "Paris",
+                    "2": "London",
+                    "3": "Berlin"
+                },
+                "correct_answer": 1
+            }
+        ),
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                QuestionResponseSerializer
+            ),
+            400: 'Error: Bad Request',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def patch(self, request, question_id):
+        try:
+            question = Question.objects.get(id=question_id)
+
+            serializer = QuestionSerializer(question, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            question = serializer.save()
+
+            cache.clear()  # Invalidate cache as database updated
+
+            return Response(
+                QuestionResponseSerializer(question).data,
+                status=status.HTTP_200_OK
+            )
+        
+        except Question.DoesNotExist:
+            return Response(
+                {"detail": "Question not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except DjangoValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuestionDetailView.patch(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+    # Delete a question by ID
+    @swagger_auto_schema(
+        tags=["Quiz-Questions"],
+        operation_description="Delete a question by ID",
+        manual_parameters=[
+            openapi.Parameter(
+                'question_id',
+                openapi.IN_PATH,
+                description="ID of the question to delete",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            204: 'Success: No Content',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def delete(self, request, question_id):
+        try:
+            question = Question.objects.get(id=question_id)
+            question.delete()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
+        except Question.DoesNotExist:
+            return Response(
+                {"detail": "Question not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuestionDetailView.delete(): {str(e)}",
                 exc_info=True
             )
 

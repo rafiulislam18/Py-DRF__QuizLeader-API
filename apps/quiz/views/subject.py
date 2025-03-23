@@ -7,7 +7,7 @@ from ..serializers import (
 )
 
 
-class SubjectView(APIView):
+class SubjectListCreateView(APIView):
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = SubjectListPagination
     
@@ -94,7 +94,7 @@ class SubjectView(APIView):
         except Exception as e:
             # Log the error for debugging
             logger.error(
-                f"Error in SubjectView.get(): {str(e)}",
+                f"Error in SubjectListCreateView.get(): {str(e)}",
                 exc_info=True
             )
 
@@ -138,7 +138,183 @@ class SubjectView(APIView):
         except Exception as e:
             # Log the error for debugging
             logger.error(
-                f"Error in SubjectView.post(): {str(e)}",
+                f"Error in SubjectListCreateView.post(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+
+class SubjectDetailView(APIView):
+    permission_classes = [IsAdminOrReadOnly]
+
+    # Update a subject by ID using PUT method
+    @swagger_auto_schema(
+        tags=["Quiz-Subjects"],
+        operation_description="Update a subject by ID using PUT method",
+        manual_parameters=[
+            openapi.Parameter(
+                'subject_id',
+                openapi.IN_PATH,
+                description="ID of the subject to update",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        request_body=SubjectSerializer,
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                SubjectSerializer
+            ),
+            400: 'Error: Bad Request',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def put(self, request, subject_id):
+        try:
+            subject = Subject.objects.get(id=subject_id)
+            
+            serializer = SubjectSerializer(subject, data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Subject.DoesNotExist:
+            return Response(
+                {"detail": "Subject not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectDetailView.put(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+    # Update a subject by ID using PATCH method
+    @swagger_auto_schema(
+        tags=["Quiz-Subjects"],
+        operation_description="Update a subject by ID using PATCH method",
+        manual_parameters=[
+            openapi.Parameter(
+                'subject_id',
+                openapi.IN_PATH,
+                description="ID of the subject to update",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        request_body=SubjectSerializer,
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                SubjectSerializer
+            ),
+            400: 'Error: Bad Request',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def patch(self, request, subject_id):
+        try:
+            subject = Subject.objects.get(id=subject_id)
+
+            serializer = SubjectSerializer(subject, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
+        except Subject.DoesNotExist:
+            return Response(
+                {"detail": "Subject not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except ValidationError as e:
+            return Response(
+                {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectDetailView.patch(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+    # Delete a subject by ID
+    @swagger_auto_schema(
+        tags=["Quiz-Subjects"],
+        operation_description="Delete a subject by ID",
+        manual_parameters=[
+            openapi.Parameter(
+                'subject_id',
+                openapi.IN_PATH,
+                description="ID of the subject to delete",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            204: 'Success: No content',
+            401: 'Error: Unauthorized',
+            403: 'Error: Forbidden',
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def delete(self, request, subject_id):
+        try:
+            subject = Subject.objects.get(id=subject_id)
+            subject.delete()
+
+            cache.clear()  # Invalidate cache as database updated
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        
+        except Subject.DoesNotExist:
+            return Response(
+                {"detail": "Subject not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectDetailView.delete(): {str(e)}",
                 exc_info=True
             )
 
