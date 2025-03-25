@@ -48,8 +48,8 @@ REST_FRAMEWORK = {
         "utils.throttles.AdminExemptUserRateThrottle",  # For authenticated users (exempts staff & superusers)
     ],
     "DEFAULT_THROTTLE_RATES": {
-        "anon": "20/minute",  # Limit for anonymous users
-        "user": "45/minute",  # Limit for authenticated users (except staff & superusers)
+        "anon": "120/minute",  # Limit for anonymous users
+        "user": "180/minute",  # Limit for authenticated users (except staff & superusers)
     },
 }
 
