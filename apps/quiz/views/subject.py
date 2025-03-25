@@ -151,6 +151,55 @@ class SubjectListCreateView(APIView):
 class SubjectDetailView(APIView):
     permission_classes = [IsAdminOrReadOnly]
 
+    # Get/retrieve a subject by ID
+    @swagger_auto_schema(
+        tags=["Quiz-Subjects"],
+        operation_description="Get/retrieve a subject by ID",
+        manual_parameters=[
+            openapi.Parameter(
+                'subject_id',
+                openapi.IN_PATH,
+                description="ID of the subject to retrieve",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                SubjectSerializer
+            ),
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def get(self, request, subject_id):
+        try:
+            subject = Subject.objects.get(id=subject_id)
+            return Response(
+                SubjectSerializer(subject).data,
+                status=status.HTTP_200_OK
+            )
+        
+        except Subject.DoesNotExist:
+            return Response(
+                {"detail": "Subject not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in SubjectDetailView.get(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     # Update a subject by ID using PUT method
     @swagger_auto_schema(
         tags=["Quiz-Subjects"],

@@ -189,6 +189,55 @@ class LessonListCreateView(APIView):
 class LessonDetailView(APIView):
     permission_classes = [IsAdminOrReadOnly]
 
+    # Get/retrieve a lesson by ID
+    @swagger_auto_schema(
+        tags=["Quiz-Lessons"],
+        operation_description="Get/retrieve a lesson by ID",
+        manual_parameters=[
+            openapi.Parameter(
+                'lesson_id',
+                openapi.IN_PATH,
+                description="ID of the lesson to retrieve",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                LessonResponseSerializer
+            ),
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def get(self, request, lesson_id):
+        try:
+            lesson = Lesson.objects.get(id=lesson_id)
+            return Response(
+                LessonResponseSerializer(lesson).data,
+                status=status.HTTP_200_OK
+            )
+        
+        except Lesson.DoesNotExist:
+            return Response(
+                {"detail": "Lesson not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in LessonDetailView.get(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     # Update a lesson by ID using PUT method
     @swagger_auto_schema(
         tags=["Quiz-Lessons"],

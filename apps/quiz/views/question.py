@@ -221,6 +221,55 @@ class QuestionListCreateView(APIView):
 class QuestionDetailView(APIView):
     permission_classes = [IsAdminOrReadOnly]
 
+    # Get/retrieve a question by ID
+    @swagger_auto_schema(
+        tags=["Quiz-Questions"],
+        operation_description="Get/retrieve a question by ID",
+        manual_parameters=[
+            openapi.Parameter(
+                'question_id',
+                openapi.IN_PATH,
+                description="ID of the question to retrieve",
+                type=openapi.TYPE_INTEGER,
+                required=True
+            ),
+        ],
+        responses={
+            200: openapi.Response(
+                'Success: Ok',
+                QuestionResponseSerializer
+            ),
+            404: 'Error: Not found',
+            429: 'Error: Too many requests',
+            500: 'Error: Internal server error'
+        }
+    )
+    def get(self, request, question_id):
+        try:
+            question = Question.objects.get(id=question_id)
+            return Response(
+                QuestionResponseSerializer(question).data,
+                status=status.HTTP_200_OK
+            )
+        
+        except Question.DoesNotExist:
+            return Response(
+                {"detail": "Question not found."},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        except Exception as e:
+            # Log the error for debugging
+            logger.error(
+                f"Error in QuestionDetailView.get(): {str(e)}",
+                exc_info=True
+            )
+
+            return Response(
+                {"detail": "An error occurred while processing your request."},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     # Update a question by ID using PUT method
     @swagger_auto_schema(
         tags=["Quiz-Questions"],
