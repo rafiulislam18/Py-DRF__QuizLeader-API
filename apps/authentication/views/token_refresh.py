@@ -23,6 +23,7 @@ class MyTokenRefreshView(TokenRefreshView):
                 'Success: Ok',
                 TokenRefreshResponseSerializer
             ),
+            400: 'Error: Bad request',
             401: 'Error: Unauthorized',
             429: 'Error: Too many requests',
             500: 'Error: Internal server error'
@@ -30,6 +31,13 @@ class MyTokenRefreshView(TokenRefreshView):
     )
     def post(self, request, *args, **kwargs):
         try:
+            # Check if refresh token is not provided
+            if not request.data.get('refresh'):
+                return Response(
+                    {"detail": "Refresh token is required."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
             return super().post(request, *args, **kwargs)
         
         except InvalidToken as e:

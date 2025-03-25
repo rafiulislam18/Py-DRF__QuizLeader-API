@@ -12,7 +12,7 @@ from rest_framework_simplejwt.exceptions import TokenError, InvalidToken
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 
-from ..throttles import HighLimitAnonRateThrottle
+from ..throttles import RegisterLoginThrottle, HighLimitAnonRateThrottle
 
 
 # Create a logger instance

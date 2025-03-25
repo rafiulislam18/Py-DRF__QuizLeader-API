@@ -3,12 +3,11 @@ from ..serializers import (
     RegisterSerializer,
     RegisterResponseSerializer
 )
-from ..throttles import RegisterThrottle
 
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    throttle_classes = [RegisterThrottle]
+    throttle_classes = [RegisterLoginThrottle]
 
     # Register a new user
     @swagger_auto_schema(

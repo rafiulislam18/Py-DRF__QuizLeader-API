@@ -8,7 +8,7 @@ from ..serializers import (
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
-    throttle_classes = [HighLimitAnonRateThrottle]
+    throttle_classes = [RegisterLoginThrottle]
 
     # Handle user login and return JWT tokens
     @swagger_auto_schema(
