@@ -12,8 +12,12 @@ ALLOWED_HOSTS = ["testserver", "localhost", "127.0.0.1"]
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ':memory:',  # In-memory database for faster tests
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
 
@@ -30,3 +34,18 @@ LOGGING['handlers'].pop('file', None)
 for logger in LOGGING['loggers'].values():
     logger['handlers'] = ['console']
     logger['level'] = 'WARNING'
+
+class DisableMigrations:
+    def __contains__(self, item):
+        return True
+
+    def __getitem__(self, item):
+        return None
+
+MIGRATION_MODULES = DisableMigrations()
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    }
+}
