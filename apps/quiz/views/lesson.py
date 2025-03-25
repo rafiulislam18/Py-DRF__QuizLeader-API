@@ -222,10 +222,14 @@ class LessonDetailView(APIView):
 
             serializer = LessonSerializer(lesson, data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            lesson = serializer.save()
 
             cache.clear()  # Invalidate cache as database updated
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            return Response(
+                LessonResponseSerializer(lesson).data,
+                status=status.HTTP_200_OK
+            )
         
         except Lesson.DoesNotExist:
             return Response(
@@ -236,6 +240,12 @@ class LessonDetailView(APIView):
         except ValidationError as e:
             return Response(
                 {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except IntegrityError as e:
+            return Response(
+                {"detail": "Duplicate lesson title found within the same subject."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
@@ -284,10 +294,14 @@ class LessonDetailView(APIView):
 
             serializer = LessonSerializer(lesson, data=request.data, partial=True)
             serializer.is_valid(raise_exception=True)
-            serializer.save()
+            lesson = serializer.save()
 
             cache.clear()  # Invalidate cache as database updated
-            return Response(serializer.data, status=status.HTTP_200_OK)
+
+            return Response(
+                LessonResponseSerializer(lesson).data,
+                status=status.HTTP_200_OK
+            )
         
         except Lesson.DoesNotExist:
             return Response(
@@ -298,6 +312,12 @@ class LessonDetailView(APIView):
         except ValidationError as e:
             return Response(
                 {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except IntegrityError as e:
+            return Response(
+                {"detail": "Duplicate lesson title found within the same subject."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
