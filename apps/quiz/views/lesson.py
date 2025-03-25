@@ -1,3 +1,5 @@
+from django.db.utils import IntegrityError
+
 from .base import *
 from ..models import Subject, Lesson
 from ..paginators import LessonListPagination
@@ -162,6 +164,12 @@ class LessonListCreateView(APIView):
         except ValidationError as e:
             return Response(
                 {"detail": str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except IntegrityError as e:
+            return Response(
+                {"detail": "Duplicate lesson title found within the same subject."},
                 status=status.HTTP_400_BAD_REQUEST
             )
         
