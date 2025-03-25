@@ -11,7 +11,7 @@ class Subject(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.id}. {self.name}"
     
     class Meta:
         indexes = [
@@ -29,7 +29,7 @@ class Lesson(models.Model):
     )
 
     def __str__(self):
-        return f"(Sub: {self.subject.name}) {self.title}"
+        return f"{self.id}. {self.title}"
     
     class Meta:
         unique_together = ('subject', 'title')
@@ -55,7 +55,7 @@ class Question(models.Model):
     )
 
     def __str__(self):
-        return f"(Lesson ID: {self.lesson.id}) Q: {self.text[:50]}..."
+        return f"{self.id}. {self.text[:50]}..." if len(self.text) > 50 else f"{self.id}. {self.text}"
     
     class Meta:
         indexes = [
@@ -82,7 +82,7 @@ class QuizAttempt(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"(Completed: {self.completed}) {self.user.username} - {self.score}"
+        return f"{self.id}. {self.user.username} - {self.score}"
     
     class Meta:
         indexes = [
