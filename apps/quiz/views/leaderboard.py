@@ -17,7 +17,7 @@ class SubjectLeaderboardView(APIView):
     pagination_class = SubjectLeaderboardPagination
 
     def get_cache_key(self, subject_id, page_number, page_size):
-        return f"leaderboard_for_subject_{subject_id}_page_{page_number}_size_{page_size}"
+        return f'leaderboard:subject:{subject_id}:page:{page_number}:size:{page_size}'
 
     # Get subject-specific leaderboard (top 10)
     @swagger_auto_schema(
@@ -134,7 +134,7 @@ class GlobalLeaderboardView(APIView):
     pagination_class = GlobalLeaderboardPagination
 
     def get_cache_key(self, page_number, page_size):
-        return f"global_leaderboard_page_{page_number}_size_{page_size}"
+        return f'leaderboard:global:page:{page_number}:size:{page_size}'
 
     # Get global leaderboard (top 25) accross all lessons
     @swagger_auto_schema(

@@ -12,7 +12,7 @@ class SubjectListCreateView(APIView):
     pagination_class = SubjectListPagination
     
     def get_cache_key(self, page_number, page_size):
-        return f'subject_page_{page_number}_size_{page_size}'
+        return f'subjects:page:{page_number}:size:{page_size}'
 
     # Get/retrieve all subjects
     @swagger_auto_schema(

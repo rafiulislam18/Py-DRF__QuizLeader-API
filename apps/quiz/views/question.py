@@ -15,7 +15,7 @@ class QuestionListCreateView(APIView):
     pagination_class = QuestionListPagination
     
     def get_cache_key(self, lesson_id, page_number, page_size):
-        return f'questions_for_lesson_{lesson_id}_page_{page_number}_size_{page_size}'
+        return f'questions:lesson:{lesson_id}:page:{page_number}:size:{page_size}'
 
     # Get/retrieve all questions for a lesson
     @swagger_auto_schema(

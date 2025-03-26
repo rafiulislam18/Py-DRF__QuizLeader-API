@@ -15,7 +15,7 @@ class LessonListCreateView(APIView):
     pagination_class = LessonListPagination
     
     def get_cache_key(self, subject_id, page_number, page_size):
-        return f'lessons_for_subject_{subject_id}_page_{page_number}_size_{page_size}'
+        return f'lessons:subject:{subject_id}:page:{page_number}:size:{page_size}'
 
     # Get/retrieve all lessons for a subject
     @swagger_auto_schema(
