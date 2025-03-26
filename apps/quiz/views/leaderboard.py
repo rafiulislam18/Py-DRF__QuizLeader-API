@@ -16,6 +16,9 @@ class SubjectLeaderboardView(APIView):
     permission_classes = [AllowAny]
     pagination_class = SubjectLeaderboardPagination
 
+    def get_cache_key(self, subject_id, page_number, page_size):
+        return f"leaderboard_for_subject_{subject_id}_page_{page_number}_size_{page_size}"
+
     # Get subject-specific leaderboard (top 10)
     @swagger_auto_schema(
         tags=["Quiz-Leaderboard"],
@@ -59,20 +62,34 @@ class SubjectLeaderboardView(APIView):
     )
     def get(self, request, subject_id):
         try:
-            leaderboard_data = QuizAttempt.objects.filter(
-                lesson__subject__id=subject_id,  # Filter by subject through lesson
-                completed=True
-            ).values(username=F('user__username')).annotate(
-                high_score=Max('score'),
-                avg_score=Avg('score'),
-                total_played=Count('id')
-            ).order_by('-high_score')[:10]
+            # Get current page from request
+            page_number = request.query_params.get('page', 1)
 
-            if not leaderboard_data.exists():
-                return Response(
-                        {"detail": "No data found for the given subject."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
+            # Get page size from request, default to the pagination class default
+            page_size = request.query_params.get(
+                'page_size',
+                self.pagination_class.page_size
+            )
+
+            cache_key = self.get_cache_key(subject_id, page_number, page_size)  # Unique key for caching leaderboard data
+            leaderboard_data = cache.get(cache_key)  # Try getting cached data
+
+            if not leaderboard_data:
+                leaderboard_data = QuizAttempt.objects.filter(
+                    lesson__subject__id=subject_id,  # Filter by subject through lesson
+                    completed=True
+                ).values(username=F('user__username')).annotate(
+                    high_score=Max('score'),
+                    avg_score=Avg('score'),
+                    total_played=Count('id')
+                ).order_by('-high_score')[:10]
+
+                if not leaderboard_data.exists():
+                    return Response(
+                            {"detail": "No data found for the given subject."},
+                            status=status.HTTP_404_NOT_FOUND
+                        )
+                cache.set(cache_key, leaderboard_data, timeout=60)  # Cache for 1 minute
 
             # Enforce pagination
             paginator = self.pagination_class()
@@ -116,6 +133,9 @@ class GlobalLeaderboardView(APIView):
     permission_classes = [AllowAny]
     pagination_class = GlobalLeaderboardPagination
 
+    def get_cache_key(self, page_number, page_size):
+        return f"global_leaderboard_page_{page_number}_size_{page_size}"
+
     # Get global leaderboard (top 25) accross all lessons
     @swagger_auto_schema(
         tags=["Quiz-Leaderboard"],
@@ -154,19 +174,33 @@ class GlobalLeaderboardView(APIView):
     )
     def get(self, request):
         try:
-            leaderboard_data = QuizAttempt.objects.filter(
-                completed=True
-            ).values(username=F('user__username')).annotate(
-                high_score=Max('score'),
-                avg_score=Avg('score'),
-                total_played=Count('id')
-            ).order_by('-high_score')[:25]
+            # Get current page from request
+            page_number = request.query_params.get('page', 1)
 
-            if not leaderboard_data.exists():
-                return Response(
-                    {"detail": "No data found."},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+            # Get page size from request, default to the pagination class default
+            page_size = request.query_params.get(
+                'page_size',
+                self.pagination_class.page_size
+            )
+
+            cache_key = self.get_cache_key(page_number, page_size)  # Unique key for caching leaderboard data
+            leaderboard_data = cache.get(cache_key)  # Try getting cached data
+
+            if not leaderboard_data:
+                leaderboard_data = QuizAttempt.objects.filter(
+                    completed=True
+                ).values(username=F('user__username')).annotate(
+                    high_score=Max('score'),
+                    avg_score=Avg('score'),
+                    total_played=Count('id')
+                ).order_by('-high_score')[:25]
+
+                if not leaderboard_data.exists():
+                    return Response(
+                        {"detail": "No data found."},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
+                cache.set(cache_key, leaderboard_data, timeout=60)  # Cache for 1 minute
 
             # Enforce pagination
             paginator = self.pagination_class()
