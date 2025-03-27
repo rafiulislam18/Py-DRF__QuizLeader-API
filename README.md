@@ -1,4 +1,5 @@
-QuizLeader API (DRF) - v1.0.0
+### DRF QuizLeader API **v1.0.0** - [Live Deployment](https://rafiulislam18.pythonanywhere.com/quiz-leader-drf-api/)  
+The API allows us to play quizzes (start quiz & submit answers), track player scores with leaderboards (subject-specific & global) & CRUD on subjects, lessons & questions.
 
 #
 
@@ -73,6 +74,107 @@ The API will be available at `http://127.0.0.1:8000/`
 #
 
 # Project Features
+
+### JWT Authentication
+
+The API implements JWT (JSON Web Token) authentication using `djangorestframework-simplejwt` for secure user authentication:
+
+- **Token Types**
+  - **Access Token**: Short-lived token (30 minutes) for API access
+  - **Refresh Token**: Long-lived token (7 days) for obtaining new access tokens & logout
+
+- **Authentication Flow**
+  1. **Registration**
+     ```http
+     POST /api/auth/register/
+     {
+       "username": "user123",
+       "password": "securepass123"
+     }
+     Response: {
+       "refresh": "refresh_token",
+       "access": "access_token",
+       "id": 1,
+       "username": "user123"
+     }
+     ```
+
+  2. **Login**
+     ```http
+     POST /api/auth/login/
+     {
+       "username": "user123",
+       "password": "securepass123"
+     }
+     Response: {
+       "refresh": "refresh_token",
+       "access": "access_token",
+       "user": {
+         "id": 1,
+         "username": "user123",
+         ...
+       }
+     }
+     ```
+
+  3. **Token Refresh**
+     ```http
+     POST /api/auth/token/refresh/
+     {
+       "refresh": "refresh_token"
+     }
+     Response: {
+       "access": "new_access_token",
+       "refresh": "new_refresh_token"
+     }
+     ```
+
+  4. **Logout**
+     ```http
+     POST /api/auth/logout/
+     {
+       "refresh": "refresh_token"
+     }
+     Response: 204 No Content
+     ```
+
+- **Security Features**
+  - Token blacklisting after logout/refresh
+  - Automatic refresh token rotation
+  - Rate limiting on authentication endpoints
+  - Secure token storage in HTTP-only cookies
+  - Bearer token authentication scheme
+
+- **Implementation Details**
+  ```python
+  # JWT Settings
+  SIMPLE_JWT = {
+      'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
+      'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+      'ROTATE_REFRESH_TOKENS': True,
+      'BLACKLIST_AFTER_ROTATION': True,
+      'ALGORITHM': 'HS256',
+      'AUTH_HEADER_TYPES': ('Bearer',),
+  }
+  ```
+
+- **Usage in Requests**
+  ```http
+  Authorization: Bearer <access_token>
+  ```
+
+- **Error Handling**
+  - 401 Unauthorized: Invalid/expired token
+  - 400 Bad Request: Invalid token format
+  - 429 Too Many Requests: Rate limit exceeded
+
+- **Best Practices**
+  - Store tokens securely (HTTP-only cookies)
+  - Implement token refresh mechanism
+  - Handle token expiration gracefully
+  - Use HTTPS for all authentication requests
+  - Implement proper error handling
+  - Follow rate limiting guidelines
 
 ### Rate-Limiting
 
