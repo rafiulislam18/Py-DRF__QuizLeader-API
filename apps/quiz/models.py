@@ -55,7 +55,7 @@ class Question(models.Model):
     )
 
     def __str__(self):
-        return f"{self.id}. {self.text[:50]}..." if len(self.text) > 50 else f"{self.id}. {self.text}"
+        return f"{self.id}. {self.text[:50]+'...' if len(self.text) > 50 else self.text}"
     
     class Meta:
         indexes = [
