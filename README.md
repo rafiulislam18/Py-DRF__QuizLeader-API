@@ -188,8 +188,8 @@ The API implements a multi-tier rate limiting strategy to protect against abuse 
   
 - **Authentication-Specific Limits**
 
-   - **Registration**: 5 requests per minute
-   - **Login/Logout/Token Refresh**: 60 requests per minute
+   - **Registration/Login**: 5 requests per minute
+   - **Token Refresh/Logout**: 60 requests per minute
 
 - **Implementation Details**
 
