@@ -20,6 +20,7 @@ class LessonListCreateView(APIView):
     # Get/retrieve all lessons for a subject
     @swagger_auto_schema(
         tags=["Quiz-Lessons"],
+        operation_id="quiz_lessons_list",
         operation_description="Get/retrieve all lessons within a subject",
         manual_parameters=[
             openapi.Parameter(
@@ -120,6 +121,7 @@ class LessonListCreateView(APIView):
     # Create a new lesson within a subject
     @swagger_auto_schema(
         tags=["Quiz-Lessons"],
+        operation_id="quiz_lessons_create",
         operation_description="Create a new lesson within a subject",
         manual_parameters=[
             openapi.Parameter(

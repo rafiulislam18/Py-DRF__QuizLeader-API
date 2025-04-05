@@ -20,6 +20,7 @@ class QuestionListCreateView(APIView):
     # Get/retrieve all questions for a lesson
     @swagger_auto_schema(
         tags=["Quiz-Questions"],
+        operation_id="quiz_questions_list",
         operation_description="Get/retrieve all questions within a lesson",
         manual_parameters=[
             openapi.Parameter(
@@ -120,6 +121,7 @@ class QuestionListCreateView(APIView):
     # Create a new question within a lesson
     @swagger_auto_schema(
         tags=["Quiz-Questions"],
+        operation_id="quiz_questions_create",
         operation_description="Create a new question within a lesson",
         manual_parameters=[
             openapi.Parameter(

@@ -22,6 +22,7 @@ class SubjectLeaderboardView(APIView):
     # Get subject-specific leaderboard (top 10)
     @swagger_auto_schema(
         tags=["Quiz-Leaderboard"],
+        operation_id="quiz_subject_leaderboard",
         operation_description="Get subject-specific leaderboard (top 10 players)",
         manual_parameters=[
             openapi.Parameter(
@@ -137,6 +138,7 @@ class GlobalLeaderboardView(APIView):
     # Get global leaderboard (top 25) accross all lessons
     @swagger_auto_schema(
         tags=["Quiz-Leaderboard"],
+        operation_id="quiz_leaderboard",
         operation_description=(
             "Get global leaderboard (top 25 players) across all lessons"
         ),

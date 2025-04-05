@@ -18,6 +18,7 @@ class QuizStartView(APIView):
     # Start a new quiz with randomized questions for a lesson
     @swagger_auto_schema(
         tags=["Quiz-Game"],
+        operation_id="quiz_game_start",
         operation_description=(
             "Start a new quiz with up to 15 randomized questions for a lesson"
         ),
@@ -106,6 +107,7 @@ class QuizSubmitView(APIView):
     # Submit quiz answers, calculate score & update user profile
     @swagger_auto_schema(
         tags=["Quiz-Game"],
+        operation_id="quiz_game_submit_answer",
         operation_description=(
             "Submit quiz answers & get score "
             "(get attempt_id by starting a quiz)"
