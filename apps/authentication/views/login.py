@@ -13,6 +13,7 @@ class LoginView(APIView):
     # Handle user login and return JWT tokens
     @swagger_auto_schema(
         tags=["Authentication"],
+        operation_id="auth_login",
         operation_description="Login user & get JWT tokens",
         request_body=LoginSerializer,
         responses={

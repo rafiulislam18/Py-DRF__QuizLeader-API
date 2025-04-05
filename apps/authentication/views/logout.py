@@ -11,6 +11,7 @@ class LogoutView(APIView):
     # Handle user logout
     @swagger_auto_schema(
         tags=["Authentication"],
+        operation_id="auth_logout",
         operation_description="Logout user by refresh token",
         request_body=LogoutSerializer,
         responses={

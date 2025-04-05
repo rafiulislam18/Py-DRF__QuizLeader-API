@@ -13,6 +13,7 @@ class MyTokenRefreshView(TokenRefreshView):
     # Handle token refresh
     @swagger_auto_schema(
         tags=["Authentication"],
+        operation_id="auth_refresh",
         operation_description=(
             "Takes a refresh type JSON web token and returns an access type "
             "JSON web token & a new refresh token blacklisting the previous "

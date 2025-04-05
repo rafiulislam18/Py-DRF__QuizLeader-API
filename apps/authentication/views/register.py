@@ -12,6 +12,7 @@ class RegisterView(APIView):
     # Register a new user
     @swagger_auto_schema(
         tags=["Authentication"],
+        operation_id="auth_register",
         operation_description="Register a new user & get JWT tokens",
         request_body=RegisterSerializer,
         responses={
