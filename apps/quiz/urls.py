@@ -17,7 +17,7 @@ from .views import (
 urlpatterns = [
     # Quiz-Game endpoints
     path('game/start/<int:lesson_id>/', QuizStartView.as_view(), name='quiz_start'),
-    path('game/submit/<int:attempt_id>/', QuizSubmitView.as_view(), name='quiz_submit'),
+    path('game/submit-answer/<int:attempt_id>/', QuizSubmitView.as_view(), name='quiz_submit'),
 
     # Quiz-Leaderboard endpoints
     path('subjects/<int:subject_id>/leaderboard/', SubjectLeaderboardView.as_view(), name='subject_leaderboard'),
