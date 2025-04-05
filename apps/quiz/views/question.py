@@ -60,6 +60,9 @@ class QuestionListCreateView(APIView):
     )
     def get(self, request, lesson_id):
         try:
+            # Check if the lesson exists
+            lesson = Lesson.objects.get(id=lesson_id)  
+
             # Get current page from request
             page_number = request.query_params.get('page', 1)
 
@@ -73,13 +76,8 @@ class QuestionListCreateView(APIView):
             questions = cache.get(cache_key)  # Try getting cached data
 
             if not questions:  # If empty cache
-                questions = Question.objects.filter(lesson__id=lesson_id)
+                questions = Question.objects.filter(lesson=lesson)
 
-                if not questions.exists():
-                    return Response(
-                        {"detail": "No questions found for the given lesson."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
                 cache.set(cache_key, questions, timeout=60*15)  # Cache for 15 minutes
 
             # Enforce pagination
@@ -93,6 +91,12 @@ class QuestionListCreateView(APIView):
             return Response(
                 {"error": "Pagination is required for this endpoint."},
                 status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Lesson.DoesNotExist:
+            return Response(
+                {"detail": "Lesson not found."},
+                status=status.HTTP_404_NOT_FOUND
             )
         
         except NotFound as e:

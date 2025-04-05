@@ -65,11 +65,6 @@ class SubjectListCreateView(APIView):
             if not subjects:  # If empty cache
                 subjects = Subject.objects.all().order_by('name')
 
-                if not subjects.exists():
-                    return Response(
-                        {"detail": "No subjects found."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
                 cache.set(cache_key, subjects, timeout=60*15)  # Cache for 15 minutes
             
             # Enforce pagination

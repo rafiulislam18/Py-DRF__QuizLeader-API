@@ -1,7 +1,7 @@
 from django.db.models import Max, Avg, Count, F
 
 from .base import *
-from ..models import QuizAttempt
+from ..models import Subject, QuizAttempt
 from ..paginators import (
     SubjectLeaderboardPagination,
     GlobalLeaderboardPagination
@@ -62,6 +62,9 @@ class SubjectLeaderboardView(APIView):
     )
     def get(self, request, subject_id):
         try:
+            # Check if the subject exists
+            subject = Subject.objects.get(id=subject_id)  
+
             # Get current page from request
             page_number = request.query_params.get('page', 1)
 
@@ -76,7 +79,7 @@ class SubjectLeaderboardView(APIView):
 
             if not leaderboard_data:
                 leaderboard_data = QuizAttempt.objects.filter(
-                    lesson__subject__id=subject_id,  # Filter by subject through lesson
+                    lesson__subject=subject,  # Filter by subject through lesson
                     completed=True
                 ).values(username=F('user__username')).annotate(
                     high_score=Max('score'),
@@ -84,11 +87,6 @@ class SubjectLeaderboardView(APIView):
                     total_played=Count('id')
                 ).order_by('-high_score')[:10]
 
-                if not leaderboard_data.exists():
-                    return Response(
-                            {"detail": "No data found for the given subject."},
-                            status=status.HTTP_404_NOT_FOUND
-                        )
                 cache.set(cache_key, leaderboard_data, timeout=60)  # Cache for 1 minute
 
             # Enforce pagination
@@ -104,7 +102,7 @@ class SubjectLeaderboardView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        except QuizAttempt.DoesNotExist:
+        except Subject.DoesNotExist:
             return Response(
                 {"detail": "Subject not found."},
                 status=status.HTTP_404_NOT_FOUND
@@ -195,11 +193,6 @@ class GlobalLeaderboardView(APIView):
                     total_played=Count('id')
                 ).order_by('-high_score')[:25]
 
-                if not leaderboard_data.exists():
-                    return Response(
-                        {"detail": "No data found."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
                 cache.set(cache_key, leaderboard_data, timeout=60)  # Cache for 1 minute
 
             # Enforce pagination

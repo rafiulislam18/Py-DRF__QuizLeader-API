@@ -60,6 +60,9 @@ class LessonListCreateView(APIView):
     )
     def get(self, request, subject_id):
         try:
+            # Check if the subject exists
+            subject = Subject.objects.get(id=subject_id)  
+
             # Get current page from request
             page_number = request.query_params.get('page', 1)
 
@@ -73,13 +76,8 @@ class LessonListCreateView(APIView):
             lessons = cache.get(cache_key)  # Try getting cached data
 
             if not lessons:  # If empty cache
-                lessons = Lesson.objects.filter(subject__id=subject_id)
+                lessons = Lesson.objects.filter(subject=subject)
 
-                if not lessons.exists():
-                    return Response(
-                        {"detail": "No lessons found for the given subject."},
-                        status=status.HTTP_404_NOT_FOUND
-                    )
                 cache.set(cache_key, lessons, timeout=60*15)  # Cache for 15 minutes
 
             # Enforce pagination
@@ -93,6 +91,12 @@ class LessonListCreateView(APIView):
             return Response(
                 {"error": "Pagination is required for this endpoint."},
                 status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        except Subject.DoesNotExist:
+            return Response(
+                {"detail": "Subject not found."},
+                status=status.HTTP_404_NOT_FOUND
             )
         
         except NotFound as e:
