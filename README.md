@@ -4,8 +4,9 @@ The API featuring JWT authentication allows to play quizzes (start quiz & submit
 ---
 
 # 🚀 Jump To
-1. 🛠️ [**Installation**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#%EF%B8%8F-installation)
-2. ✨ [**Project Features**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-project-features)
+- 🛠️ [**Installation**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#%EF%B8%8F-installation)
+- 🏗️ [**Project Structure**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#%EF%B8%8F-project-structure)
+- ✨ [**Project Features**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-project-features)
    - 🔐 [**JWT Authentication**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jwt-authentication)
    - ⏳ [**Rate-Limiting**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-rate-limiting)
    - 📄 [**Pagination**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-pagination)
@@ -14,9 +15,8 @@ The API featuring JWT authentication allows to play quizzes (start quiz & submit
    - 🗄️ [**Database Optimization**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#%EF%B8%8F-database-optimization)
    - 📝 [**Logging**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-logging)
    - 📚 [**API Documentation**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-api-documentation)
-3. 🏗️ [**Project Structure**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#%EF%B8%8F-project-structure)
-4. 📜 [**Terms of Service**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-terms-of-service)
-5. 🌟 [**Upcoming version 1.0.1 features**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-upcoming-version-101-features)
+- 📜 [**Terms of Service**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-terms-of-service)
+- 🌟 [**Upcoming version 1.0.1 features**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-upcoming-version-101-features)
 
 ---
 
@@ -88,7 +88,7 @@ The API featuring JWT authentication allows to play quizzes (start quiz & submit
 
 The API will be available at `http://127.0.0.1:8000/`
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ---
 
@@ -195,7 +195,7 @@ The API implements JWT (JSON Web Token) authentication using `djangorestframewor
   - Implement proper error handling
   - Follow rate limiting guidelines
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## ⏳ Rate-Limiting
 
@@ -220,7 +220,7 @@ The API implements a multi-tier rate limiting strategy to protect against abuse 
    - Rate limits are enforced per user for authenticated users
    - Staff and superusers are exempt from rate limiting for administrative tasks
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## 📄 Pagination
 
@@ -255,7 +255,7 @@ The API implements a flexible pagination system with view-specific settings to e
   - Custom page size: `GET /api/endpoint/?page_size=20`
   - Specific page: `GET /api/endpoint/?page=2`
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## 🔒 Permissions
 
@@ -299,7 +299,7 @@ The API implements a role-based permission system to control access to different
   - Granular permission checks per endpoint
   - Consistent error responses (401/403)
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## ⚡ Caching
 
@@ -361,7 +361,7 @@ The API implements a strategic caching system to optimize performance and reduce
   - Lower server load
   - Better scalability
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## 🗄️ Database Optimization
 
@@ -465,7 +465,7 @@ The API implements several database optimization strategies to enhance performan
     - Reduced database load
     - Improved response times
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## 📝 Logging
 
@@ -551,7 +551,7 @@ The API implements a comprehensive logging system with environment-specific conf
     - 5 backup files maintained
     - Environment-specific log files (`dev.log`, `prod.log`)
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ## 📚 API Documentation
 
@@ -631,7 +631,7 @@ The API uses drf-yasg (Yet Another Swagger Generator) to provide interactive doc
   - Authentication requirements
   - Status code documentation
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ---
 
@@ -730,7 +730,7 @@ Py-DRF__QuizLeader_API/
 │   │   ├── test_views/             # Views tests
 │   │   └── __init__.py
 │   │   
-│   └── quiz/                       # Quiz app tests
+│   ├── quiz/                       # Quiz app tests
 │   │   ├── test_models/            # Models tests
 │   │   ├── test_serializers/       # Serializers tests
 │   │   ├── test_views/             # Views tests
@@ -751,39 +751,20 @@ Py-DRF__QuizLeader_API/
 └── README.md                       # Project documentation
 ```
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
-### Key Features of the Structure
+### Key Features of The Structure
 
-- **Django Best Practices**:
+- **Modular Apps**: Modular app-based architecture. `authentication` for user login, registration, token refresh and logout. `quiz` for managing quiz gameplay and leaderboards, both with custom serializers, views and permissions.
+- **DRF API**: A scalable RESTful API powered by Django REST Framework for seamless quiz and user management.
+- **Config Flexibility**: Tailored settings in `config/settings/` for development, production and testing environments.
+- **Testing**: Comprehensive tests in `tests/` for models, serializers and views, driven by pytest.
+- **Utilities**: Features rate-limiting in `utils/throttles.py` and a secret key generator script in `scripts/`.
+- **Dependencies**: Organized in `requirements/` with `base.txt` for core needs and `dev.txt`, `prod.txt`, `test.txt` for specific environments.
+- **Logging**: Supports debugging and production monitoring with logs stored in `logs/`.
+- **Env Management**: Uses `.env` for secure environment variables with a `demo.env` example provided for development & testing.
 
-   - Modular app-based architecture
-   - Clear separation of concerns
-   - Environment-specific settings management
-   - Secure configuration handling with environment variables
-
-- **API Design Standards**:
-
-   - RESTful endpoint structure
-   - Consistent URL routing patterns
-   - Proper HTTP method handling
-   - Standardized response formats
-
-- **Security & Performance**:
-
-   - JWT-based authentication
-   - Rate limiting and throttling
-   - Caching mechanisms
-   - Input validation and sanitization
-
-- **Testing & Quality**:
-
-   - Comprehensive test coverage
-   - Isolated test environments
-   - Automated test suite
-   - Shared test fixtures
-
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ---
 
@@ -836,7 +817,7 @@ Py-DRF__QuizLeader_API/
 - All API list responses are paginated with view-specific limits
 - The API implements caching mechanisms for all paginated list responses
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
 ---
 
@@ -845,4 +826,4 @@ Py-DRF__QuizLeader_API/
 - Check for available Lessons within Subjects having valid number of questions (min-15) to play quiz
 - Add detailed docs in README.md on how to use the full API step by step
 
-[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-jump-to)
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
