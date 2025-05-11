@@ -13,6 +13,7 @@ The API featuring JWT authentication allows to play quizzes (start quiz & submit
    - 🔒 [**Permissions**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-permissions)
    - ⚡ [**Caching**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-caching)
    - 🗄️ [**Database Optimization**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#%EF%B8%8F-database-optimization)
+   - ❌ [**Error Handling**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-error-handling)
    - 📝 [**Logging**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-logging)
    - 📚 [**API Documentation**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-api-documentation)
 - 📜 [**Terms of Service**](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#-terms-of-service)
@@ -464,6 +465,135 @@ The API implements several database optimization strategies to enhance performan
     - Database query result caching
     - Reduced database load
     - Improved response times
+
+[🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
+
+## ❌ Error Handling
+
+The API implements comprehensive error handling across all endpoints using consistent patterns and best practices:
+
+### 1. Standardized Error Response Format
+All error responses follow a consistent JSON structure:
+```json
+{
+    "detail": "Descriptive error message"
+}
+```
+
+### 2. HTTP Status Codes
+- `200`: Successful request
+- `201`: Resource successfully created
+- `204`: Successful deletion/logout
+- `400`: Bad request / Invalid input
+- `401`: Unauthorized / Invalid token
+- `403`: Forbidden / Insufficient permissions
+- `404`: Resource not found
+- `429`: Too many requests
+- `500`: Internal server error
+
+### 3. Exception Handling Patterns
+We implement granular exception handling for different scenarios:
+
+```python
+try:
+    # Main logic here
+    
+except ValidationError as e:
+    return Response(
+        {"detail": str(e)},
+        status=status.HTTP_400_BAD_REQUEST
+    )
+    
+except Model.DoesNotExist:
+    return Response(
+        {"detail": "Resource not found."},
+        status=status.HTTP_404_NOT_FOUND
+    )
+    
+except Exception as e:
+    logger.error(f"Error in ViewName.method(): {str(e)}", exc_info=True)
+    return Response(
+        {"detail": "An error occurred while processing your request."},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )
+```
+
+### 4. Specific Error Cases
+
+#### Authentication Errors
+- Invalid credentials
+- Token expiration
+- Blacklisted tokens
+```python
+except (InvalidToken, TokenError) as e:
+    return Response(
+        {"detail": str(e)},
+        status=status.HTTP_401_UNAUTHORIZED
+    )
+```
+
+#### Validation Errors
+- Input validation failures
+- Business rule violations
+```python
+serializer.is_valid(raise_exception=True)  # Raises ValidationError
+```
+
+#### Resource Access Errors
+- Object not found
+- Permission denied
+```python
+except Model.DoesNotExist:
+    return Response(
+        {"detail": "Resource not found."},
+        status=status.HTTP_404_NOT_FOUND
+    )
+```
+
+### 5. Error Logging
+- All unexpected errors are logged with full stack traces
+- Includes contextual information (view name, error type)
+- Environment-specific logging levels
+```python
+logger.error(
+    f"Error in ViewName.method(): {str(e)}",
+    exc_info=True
+)
+```
+
+### 6. Error Prevention
+- Database transactions for data consistency
+- Rate limiting to prevent abuse
+- Input validation before processing
+- Permission checks before actions
+```python
+@transaction.atomic
+def post(self, request):
+    # Ensures all-or-nothing database updates
+```
+
+### 7. Documentation
+- All possible error responses are documented in Swagger
+- Error scenarios included in API documentation
+- Clear error messages for client understanding
+```python
+@swagger_auto_schema(
+    responses={
+        200: "Success response",
+        400: "Bad Request",
+        401: "Unauthorized",
+        404: "Not Found",
+        500: "Internal Server Error"
+    }
+)
+```
+
+This robust error handling ensures that:
+- Clients receive clear, actionable error messages
+- Developers can effectively debug issues
+- The system maintains data consistency
+- Security is not compromised
+- API documentation clearly indicates possible errors
 
 [🔼 Back to Top](https://github.com/rafiulislam18/Py-DRF__QuizLeader-API?tab=readme-ov-file#drf-quizleader-api-v100---live-deployment)
 
