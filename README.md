@@ -831,8 +831,8 @@ Py-DRF__QuizLeader_API/
 │   ├── settings/
 │   │   ├── __init__.py
 │   │   ├── base.py                 # Common settings
-│   │   ├── development.py          # Dev-env specific settings
-│   │   ├── production.py           # Prod-env specific settings
+│   │   ├── dev.py                  # Dev-env specific settings
+│   │   ├── prod.py                 # Prod-env specific settings
 │   │   └── test.py                 # Test-env specific settings
 │   │   
 │   ├── __init__.py
