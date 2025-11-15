@@ -1,9 +1,15 @@
 import os
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
 
+
+load_dotenv()  # Load environment variables from .env file
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-@lnh$z_yzcq#flp7$m@a-xdvp)981o(44&8mw)tf1*ueh2in$%')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') + ['localhost', '127.0.0.1', 'testserver']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -60,7 +66,7 @@ SIMPLE_JWT = {
     'ROTATE_REFRESH_TOKENS': True,  # Issues a new refresh token on each refresh
     'BLACKLIST_AFTER_ROTATION': True,  # Blacklists old refresh tokens
     'ALGORITHM': 'HS256',
-    'SIGNING_KEY': None,  # Use Django's SECRET_KEY for signing & config this later on separate environment-specific settings files due to security reasons
+    'SIGNING_KEY': SECRET_KEY,  # Use Django's SECRET_KEY for signing
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
